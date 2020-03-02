@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base href="/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MvcAngCliAad</title>
+</head>
+<body>
+    <partial name="_LoginPartial" />
+    @RenderBody()
+
+    <script type="text/javascript" asp-src-include="~/dist/runtime*.js"></script>
+    <script type="text/javascript" asp-src-include="~/dist/polyfills*.js"></script>
+    <script type="text/javascript" asp-src-include="~/dist/styles*.js"></script>
+    <link rel="stylesheet" asp-href-include="~/dist/styles*.css" />
+    <script type="text/javascript" asp-src-include="~/dist/vendor*.js"></script>
+    <script type="text/javascript" asp-src-include="~/dist/main*.js"></script>
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
