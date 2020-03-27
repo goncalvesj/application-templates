@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /NetCore-Angular-Elements/wwwroot/dist
 /NetCore-Angular-Elements/.vscode
+/NetCore-Angular-AzureB2C/.config

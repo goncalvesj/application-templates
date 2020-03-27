@@ -38,6 +38,7 @@
     "@angular/cli": "8.3.14",
     "@angular/compiler-cli": "8.2.12",
     "@angular/language-service": "8.2.12",
+    "@babel/compat-data": "~7.8.0",
     "@types/jasmine": "~3.4.4",
     "@types/jasminewd2": "~2.0.8",
     "@types/node": "~12.11.6",
