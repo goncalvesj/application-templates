@@ -26,9 +26,5 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: ls -R $GITHUB_WORKSPACE
-
     - name: Build the Docker image
       run: docker build . --file $GITHUB_WORKSPACE/$DOCKERFILE_PATH --tag $IMAGE_NAME:$GITHUB_RUN_ID
