@@ -11,7 +11,7 @@ on:
     branches: [ master ]
 
 env:
-  DOCKERFILE_PATH: "/NetCore-Angular-AzureB2C/Dockerfile"
+  #DOCKERFILE_PATH: "/NetCore-Angular-AzureB2C/Dockerfile"
   IMAGE_NAME: "goncalvesj/netcore-angular-b2c"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -26,5 +26,10 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
+    #- name: Build the Docker image
+    #  run: docker build . --file $GITHUB_WORKSPACE/$DOCKERFILE_PATH --tag $IMAGE_NAME:$GITHUB_RUN_ID
+    
     - name: Build the Docker image
-      run: docker build . --file $GITHUB_WORKSPACE/$DOCKERFILE_PATH --tag $IMAGE_NAME:$GITHUB_RUN_ID
+      run: |
+        cd /NetCore-Angular-AzureB2C
+        docker build . --file Dockerfile --tag $IMAGE_NAME:$GITHUB_RUN_ID
