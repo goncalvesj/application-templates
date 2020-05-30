@@ -31,5 +31,6 @@ jobs:
     
     - name: Build the Docker image
       run: |
-        cd /NetCore-Angular-AzureB2C
+        ls -R        
+        cd NetCore-Angular-AzureB2C
         docker build . --file Dockerfile --tag $IMAGE_NAME:$GITHUB_RUN_ID
