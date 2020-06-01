@@ -1,0 +1,26 @@
+name: NetCore-Angular-B2C-CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'NetCore-Angular-AzureB2C/*'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'NetCore-Angular-AzureB2C/*'
+
+env:
+  IMAGE_NAME: "goncalvesj/netcore-angular-b2c"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build the Docker image
+      run: |
+        cd NetCore-Angular-AzureB2C
+        docker build . --file Dockerfile --tag $IMAGE_NAME:$GITHUB_RUN_ID
