@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  ncngb2c:
+    image: goncalvesj/netcore-angular-b2c:dev
+    build: .
+    ports:
+      - "44341:80"
