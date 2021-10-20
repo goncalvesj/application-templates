@@ -1,0 +1,74 @@
+{
+  "name": "electron-angular-aad-poc",
+  "productName": "electron-angular-aad-poc",
+  "version": "1.0.0",
+  "description": "electron-angular-aad-poc",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "tslint src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "packageManager": "npm"
+      },
+      "electronWinstallerConfig": {
+        "name": "my_new_project_ang"
+      },
+      "electronInstallerDebian": {},
+      "electronInstallerRedhat": {},
+      "github_repository": {
+        "owner": "",
+        "name": ""
+      },
+      "windowsStoreConfig": {
+        "packageName": "",
+        "name": "mynewprojectang"
+      }
+    }
+  },
+  "dependencies": {
+    "@angular/common": "6.0.3",
+    "@angular/compiler": "6.0.3",
+    "@angular/core": "6.0.3",
+    "@angular/platform-browser": "6.0.3",
+    "@angular/platform-browser-dynamic": "6.0.3",
+    "@angular/router": "^6.0.6",
+    "electron": "^2.0.3",
+    "electron-compile": "^6.4.2",
+    "electron-devtools-installer": "^2.2.4",
+    "electron-squirrel-startup": "^1.0.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "6.1.0",
+    "tslib": "^1.9.3",
+    "zone.js": "0.8.26"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "electron-forge": "^5.2.2",
+    "electron-prebuilt-compile": "2.0.3",
+    "tslint": "^4.5.1",
+    "typescript": "^2.9.2"
+  }
+}
