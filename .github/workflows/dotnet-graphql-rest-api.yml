@@ -1,6 +1,12 @@
 name: DotNet-GraphQL-Rest-APIs-Pipeline
 
 on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Reason'
+        required: true
+        default: 'Testing'
   push:
     branches: [ master ]
     paths:
