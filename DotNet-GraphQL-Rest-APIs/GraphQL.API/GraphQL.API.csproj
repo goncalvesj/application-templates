@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>8e861c6c-1cbd-4516-a4d6-5a6659249f30</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Note.cs" />
+	  <Compile Remove="NotesQuery.cs" />
+	  <Compile Remove="NotesSchema.cs" />
+	  <Compile Remove="NoteType.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+		<PackageReference Include="GraphQL" Version="4.6.1" />
+		<PackageReference Include="GraphQL.MicrosoftDI" Version="4.6.1" />
+		<PackageReference Include="GraphQL.Server.Authorization.AspNetCore" Version="5.0.2" />
+		<PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.0.2" />
+		<PackageReference Include="GraphQL.Server.Ui.Altair" Version="5.0.2" />
+		<PackageReference Include="GraphQL.SystemTextJson" Version="4.6.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>
