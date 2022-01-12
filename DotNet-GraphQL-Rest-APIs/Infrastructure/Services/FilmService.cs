@@ -2,7 +2,9 @@
 
 public class FilmService
 {
-    private readonly string FilmDataLocation = $"{AppContext.BaseDirectory}\\films.json";
+    private readonly string FilmDataLocation = File.Exists($"{AppContext.BaseDirectory}\\films.json") 
+        ? $"{AppContext.BaseDirectory}\\films.json" 
+        : "films.json";
 
     private readonly JsonSerializerOptions options = new()
     {

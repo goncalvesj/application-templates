@@ -1,0 +1,26 @@
+name: DotNet-GraphQL-Rest-APIs-Pipeline
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'DotNet-GraphQL-Rest-APIs/*'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'DotNet-GraphQL-Rest-APIs/*'
+
+env:
+  GRAPHQL_IMAGE_NAME: "graphql-api"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build the GraphQL Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f .\GraphQL.API\Dockerfile -t $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
