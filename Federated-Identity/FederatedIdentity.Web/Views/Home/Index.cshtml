@@ -1,0 +1,39 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+<form method="get" asp-controller="Home">
+
+  <div class="form-horizontal">
+    <div class="form-group">
+      <label class="control-label col-md-2" for="email">Email address:</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" id="email" name="email" value="" required />
+        <span class="text-danger field-validation-valid" data-valmsg-for="email" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="phone">Phone number (with country prefix):</label>
+      <div class="col-md-10">
+        <input class="form-control" type="text" id="phone" name="phone" value="" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="phone" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Send invite" class="btn btn-primary" />
+      </div>
+    </div>
+  </div>
+</form>
+
+<div>
+  Message: @ViewData["Message"]
+</div>
+<div>
+  <a href="@ViewData["Link"]" target="_blank">Link Here</a>
+  <br/>
+  @ViewData["Link"]
+</div> 

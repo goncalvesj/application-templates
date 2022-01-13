@@ -1,0 +1,31 @@
+name: Federated Identity CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'FederatedIdentity/FederatedIdentity.Web/*'
+      - '.github/workflows/federated-identity.yml'
+env:
+  IMAGE_NAME: "goncalvesj/federated-identity"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +%s)"
+      
+    - name: Build the Docker image
+      run: | 
+       cd FederatedIdentity/FederatedIdentity.Web
+       docker build . --file Dockerfile --tag $IMAGE_NAME:${{ steps.date.outputs.date }}
+      
+    - name: Docker Login
+      run: echo '${{ secrets.DOCKERHUB_PASSWORD }}' | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+    
+    - name: Docker Push
+      run: docker push $IMAGE_NAME:${{ steps.date.outputs.date }}
