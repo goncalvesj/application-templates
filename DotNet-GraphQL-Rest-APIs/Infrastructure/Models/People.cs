@@ -1,6 +1,6 @@
-﻿public class Film
+﻿public class People
 {
-    public FilmFields Fields { get; set; }
+    public PeopleFields Fields { get; set; }
     public string Model { get; set; }
     public int Pk { get; set; }
 }

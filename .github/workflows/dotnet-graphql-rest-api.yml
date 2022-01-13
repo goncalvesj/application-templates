@@ -18,6 +18,7 @@ on:
 
 env:
   GRAPHQL_IMAGE_NAME: "graphql-api"
+  REST_IMAGE_NAME: "rest-api"
 
 jobs:
   build:
@@ -30,3 +31,8 @@ jobs:
       run: |
         cd DotNet-GraphQL-Rest-APIs
         docker build . -f GraphQL.API/Dockerfile -t $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+
+    - name: Build the REST Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f Rest.API/Dockerfile -t $REST_IMAGE_NAME:$GITHUB_RUN_ID

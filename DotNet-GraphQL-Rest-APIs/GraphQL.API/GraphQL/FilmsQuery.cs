@@ -11,7 +11,7 @@ public class FilmsQuery : ObjectGraphType
             "Gets first film from file.",
             resolve: context =>
             {
-                var data = new FilmService();
+                var data = new DataService();
                 var films = data.GetFilms();
                 return films.FirstOrDefault();
             });
@@ -20,7 +20,7 @@ public class FilmsQuery : ObjectGraphType
             "Gets all films aync.",
            resolve: async context =>
            {
-               var data = new FilmService();
+               var data = new DataService();
                var films = await data.GetFilmsAsync();
                return films;
            });

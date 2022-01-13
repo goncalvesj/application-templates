@@ -28,9 +28,11 @@ Uses:
 
 - ``docker build -t <repo/imagename>:<tag> .``
 - ``docker build -f .\GraphQL.API\Dockerfile -t graphql-api:dev .``
+- ``docker build -f .\Rest.API\Dockerfile -t rest-api:dev .``
 
 - ``docker run --rm -d -p 8080:80 --name <name> <repo/imagename>:<tag>``
 - ``docker run --rm -d -p 8080:80 --name graphapi graphql-api:dev``
+- ``docker run --rm -d -p 8080:80 --name restapi rest-api:dev``
 
 ### Deploy
 

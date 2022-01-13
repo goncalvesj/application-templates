@@ -10,17 +10,10 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/film", async () =>
+app.MapGet("/people", async () =>
 {
-    var data = new FilmService();
-    var films = await data.GetFilmsAsync();
-    return films.FirstOrDefault();
-});
-
-app.MapGet("/films", async () =>
-{
-    var data = new FilmService();
-    var films = await data.GetFilmsAsync();
+    var data = new DataService();
+    var films = await data.GetPeopleAsync();
     return films;
 });
 

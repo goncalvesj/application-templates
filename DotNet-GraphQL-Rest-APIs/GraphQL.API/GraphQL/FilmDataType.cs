@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-public class FilmDataType : ObjectGraphType<Fields>
+public class FilmDataType : ObjectGraphType<FilmFields>
 {
     public FilmDataType()
     {

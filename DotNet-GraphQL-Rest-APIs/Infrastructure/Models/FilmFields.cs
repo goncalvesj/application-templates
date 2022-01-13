@@ -1,4 +1,4 @@
-﻿public class Fields
+﻿public class FilmFields
 {
     public List<int> Starships { get; set; }
     public DateTime Edited { get; set; }

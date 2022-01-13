@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="people.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="films.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="people.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
