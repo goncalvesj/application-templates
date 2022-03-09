@@ -7,8 +7,21 @@ using System.Threading.Tasks;
 
 namespace EventSourcing.Functions
 {
-    public static class ProjectionService
+    public interface IProjectionService
     {
+        Task RebuildProjections();
+        Task BuildProjection(Message message);
+    }
+
+    public class ProjectionService : IProjectionService
+    {
+        private readonly string _storageConnectionString;
+
+        public ProjectionService(string storageConnectionString)
+        {
+            _storageConnectionString = storageConnectionString;
+        }
+
         public static async Task<EventProjectionsEntity> CreateLookUpProjectionAsync(CloudTable eventProjectionsTable)
         {
             var allConferences = new EventProjectionsEntity
@@ -103,6 +116,79 @@ namespace EventSourcing.Functions
             };
 
             return entity;
+        }
+
+        public async Task RebuildProjections()
+        {
+            var storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var eventStoreTable = tableClient.GetTableReference("EventStoreTable");
+            eventStoreTable.CreateIfNotExists();
+
+            var eventProjectionsTable = tableClient.GetTableReference("EventProjectionsTable");
+            eventProjectionsTable.CreateIfNotExists();
+
+            var linqQuery = eventStoreTable.CreateQuery<EventStoreEntity>().ToList();
+
+            var partitions = linqQuery.GroupBy(x => x.PartitionKey).Select(x => x.Key);
+
+            var conferenceList = new List<ConferenceDataModel>();
+            TableOperation insertOrMergeOperation;
+
+            foreach (var partition in partitions)
+            {
+                var events = linqQuery
+                    .Where(x => x.PartitionKey == partition)
+                    .OrderBy(x => x.Timestamp);
+
+                var entity = CreateConferenceProjection(eventProjectionsTable, new Message { Stream = "Conference", Id = partition }, events);
+
+                conferenceList.Add(JsonConvert.DeserializeObject<ConferenceDataModel>(entity.Payload));
+
+                insertOrMergeOperation = TableOperation.InsertOrReplace(entity);
+
+                await eventProjectionsTable.ExecuteAsync(insertOrMergeOperation);
+            }
+
+            var allConferences = new EventProjectionsEntity
+            {
+                PartitionKey = "LookUps",
+                RowKey = "AllConferences",
+                Payload = JsonConvert.SerializeObject(conferenceList)
+            };
+
+            insertOrMergeOperation = TableOperation.InsertOrReplace(allConferences);
+
+            await eventProjectionsTable.ExecuteAsync(insertOrMergeOperation);
+        }
+
+        public async Task BuildProjection(Message message)
+        {
+            var storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+
+            var eventStoreTable = tableClient.GetTableReference("EventStoreTable");
+            eventStoreTable.CreateIfNotExists();
+
+            var eventProjectionsTable = tableClient.GetTableReference("EventProjectionsTable");
+            eventProjectionsTable.CreateIfNotExists();
+
+            var linqQuery = eventStoreTable.CreateQuery<EventStoreEntity>()
+                .Where(x => x.PartitionKey == message.Id && x.RowKey == message.SequenceNumber)
+                .ToList();
+
+            var entity = message.Stream switch
+            {
+                "Conference" => CreateConferenceProjection(eventProjectionsTable, message, linqQuery),
+                _ => null
+            };
+
+            var insertOrMergeOperation = TableOperation.InsertOrReplace(entity);
+
+            await eventProjectionsTable.ExecuteAsync(insertOrMergeOperation);
+
+            await UpdateConferenceLookUpProjectionAsync(eventProjectionsTable, linqQuery.SingleOrDefault());
         }
     }
 }
