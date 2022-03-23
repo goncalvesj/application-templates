@@ -51,7 +51,7 @@ jobs:
       run: |
         cd DotNet-GraphQL-Rest-APIs
         docker build . -f GraphQL.API/Dockerfile -t $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
-        docker push $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        docker push ghcr.io/goncalvesj/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
     # - name: Build the REST Docker image
     #   run: |
