@@ -4,33 +4,23 @@ The purpose of this repository is to provide examples of application templates a
 
 ## Templates
 
-.NET 6 Minimal APIs based on GraphQL and REST:
+[.NET 6 Minimal APIs based on GraphQL and REST](DotNet-GraphQL-Rest-APIs)
 
-[DotNet-GraphQL-Rest-APIs](DotNet-GraphQL-Rest-APIs)
+[Electron Application with Angular that uses Azure AD for AUTH](Electron-Angular-AzureAd)
 
-Electron Application with Angular that uses Azure AD for AUTH:
+[Application based on the Event Sourcing Pattern, React Front End, Azure Functions Backend and Azure Storage for Data](Event-Sourcing)
 
-[Electron-Angular-AzureAd](Electron-Angular-AzureAd)
+[Application based on the Federated Identity Pattern, .NET Core MVC and Azure B2C for Auth](Federated-Identity)
 
-MVC Application with Angular Client App that uses Azure AD for AUTH:
+[.NET Core MVC Application with Angular Client App that uses Azure AD for AUTH](NetCore-Angular-AzureAd)
 
-[NetCore-Angular-AzureAd](NetCore-Angular-AzureAd)
+[.NET Core MVC Application with Angular Client App that uses Azure AD B2C for AUTH](NetCore-Angular-AzureB2C)
 
-MVC Application with Angular Client App that uses Azure AD B2C for AUTH:
+[.NET Core MVC Application with Angular Client App that contains an example of usage of Angular Elements](NetCore-Angular-Elements)
 
-[NetCore-Angular-AzureB2C](NetCore-Angular-AzureB2C)
+[.NET Core that contains an example of usage of Azure Durable Functions](NetCore-Durable-Functions)
 
-MVC Application with Angular Client App that contains an example of usage of Angular Elements
-
-[NetCore-Angular-Elements](NetCore-Angular-Elements)
-
-.NET Core that contains an example of usage of Azure Durable Functions
-
-[NetCore-Durable-Functions](NetCore-Durable-Functions)
-
-.NET Core that can be used as a Windows Service
-
-[NetCore-WinService](NetCore-WinService)
+[.NET Core Application that can be used as a Windows Service](NetCore-WinService)
 
 TODO:
 
