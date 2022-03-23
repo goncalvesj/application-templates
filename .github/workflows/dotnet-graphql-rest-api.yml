@@ -45,7 +45,7 @@ jobs:
       with:
         push: true
         tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-        file: ./GraphQL.API/Dockerfile
+        file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
     # - name: Build the GraphQL Docker image
     #   run: |
     #     cd DotNet-GraphQL-Rest-APIs
