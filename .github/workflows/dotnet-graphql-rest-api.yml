@@ -37,19 +37,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     
-    - name: Lowercase the repo name and username
-      run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+    # - name: Lowercase the repo name and username
+    #   run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-        file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
-    # - name: Build the GraphQL Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f GraphQL.API/Dockerfile -t $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+    # - name: Build and push container image to registry
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     push: true
+    #     tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
+    #     file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
+    
+    - name: Build the GraphQL Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f GraphQL.API/Dockerfile -t $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        docker push $GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
     # - name: Build the REST Docker image
     #   run: |
