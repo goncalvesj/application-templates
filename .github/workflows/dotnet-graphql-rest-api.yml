@@ -27,9 +27,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # - name: Set up Docker Buildx
-    #   uses: docker/setup-buildx-action@v1
-
     - name: Log in to GitHub container registry
       uses: docker/login-action@v1.10.0
       with:
@@ -37,23 +34,14 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     
-    # - name: Lowercase the repo name and username
-    #   run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-    # - name: Build and push container image to registry
-    #   uses: docker/build-push-action@v2
-    #   with:
-    #     push: true
-    #     tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-    #     file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
-    
     - name: Build the GraphQL Docker image
       run: |
         cd DotNet-GraphQL-Rest-APIs
-        docker build . -f GraphQL.API/Dockerfile -t ghcr.io/goncalvesj/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
-        docker push ghcr.io/goncalvesj/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        docker build . -f GraphQL.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
-    # - name: Build the REST Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f Rest.API/Dockerfile -t $REST_IMAGE_NAME:$GITHUB_RUN_ID
+    - name: Build the REST Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
+        docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
