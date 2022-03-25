@@ -8,21 +8,21 @@ on:
         required: true
         default: 'Testing'
   push:
-    branches: [ master, gh-actions ]
+    branches: [master, gh-actions]
     # paths:
     #   - 'DotNet-GraphQL-Rest-APIs/*'
   pull_request:
-    branches: [ master ]
+    branches: [master]
     # paths:
     #   - 'DotNet-GraphQL-Rest-APIs/*'
 
 env:
-  GRAPHQL_IMAGE_NAME: "sw-graphql"
-  REST_IMAGE_NAME: "sw-rest"
+  GRAPHQL_IMAGE_NAME: 'sw-graphql'
+  REST_IMAGE_NAME: 'sw-rest'
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 
 jobs:
   build:
@@ -30,51 +30,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    # - name: Azure Login
-    #   uses: Azure/login@v1
-    #   with:
-    #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-    #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-    #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set Envs
+        run: |
+          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
-    # - name: Azure ACR Login
-    #   run: | 
-    #     az acr login -n ${{ secrets.AZURE_ACR_NAME }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.6.0
 
-    - name: Set Envs
-      run: |
-        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          context: ./DotNet-GraphQL-Rest-APIs
+          file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
+          tags: ${{ env.GRAPH_IMAGE }}
+          outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
 
-    # - name: Build and Push the GraphQL Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build -o type=docker,dest=/tmp/myimage.tar . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          context: ./DotNet-GraphQL-Rest-APIs
+          file: ./DotNet-GraphQL-Rest-APIs/Rest.API/Dockerfile
+          tags: ${{ env.REST_IMAGE }}
+          outputs: type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1.6.0
-
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v2
-      with:
-        push: false
-        context: ./DotNet-GraphQL-Rest-APIs
-        file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
-        tags: ${{ env.GRAPH_IMAGE }}
-        outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
-
-    # - name: Build and Push the REST Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
-  
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3.0.0
-      with:
-        name: docker-images
-        path: /tmp/*.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: docker-images
+          path: /tmp/*.tar
 
   deploy:
     needs: build
@@ -82,40 +70,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Azure Login
-      uses: Azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    
-    - name: Azure ACR Login
-      run: | 
-        az acr login -n ${{ secrets.AZURE_ACR_NAME }}
-    
-    - name: Set Envs
-      run: |
-        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: docker-images
-        path: /tmp
+      - name: Azure ACR Login
+        run: |
+          az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    - name: Load Docker image
-      run: |
-        docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
-        docker image ls -a
-        docker push $GRAPH_IMAGE
+      - name: Set Envs
+        run: |
+          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
-    # - name: Build and Push the GraphQL Docker image
-    #   run: |
-    #     docker push $GRAPH_IMAGE
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-images
+          path: /tmp
 
-    # - name: Build and Push the REST Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
-    #     docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
+      - name: Load Docker image
+        run: |
+          docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
+          docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
+          docker image ls -a
+          docker push $GRAPH_IMAGE
+          docker push $REST_IMAGE
