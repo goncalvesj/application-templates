@@ -36,3 +36,22 @@ jobs:
     
     - name: Test Az Login
       run: az account show
+
+    # - name: Log in to GitHub container registry
+    #   uses: docker/login-action@v1.10.0
+    #   with:
+    #     registry: ghcr.io
+    #     username: ${{ github.actor }}
+    #     password: ${{ github.token }}
+    
+    # - name: Build the GraphQL Docker image
+    #   run: |
+    #     cd DotNet-GraphQL-Rest-APIs
+    #     docker build . -f GraphQL.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+    #     docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+
+    # - name: Build the REST Docker image
+    #   run: |
+    #     cd DotNet-GraphQL-Rest-APIs
+    #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
+    #     docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
