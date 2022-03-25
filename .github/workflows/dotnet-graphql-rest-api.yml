@@ -8,7 +8,7 @@ on:
         required: true
         default: 'Testing'
   push:
-    branches: [ master ]
+    branches: [ master, gh-actions ]
     paths:
       - 'DotNet-GraphQL-Rest-APIs/*'
   pull_request:
