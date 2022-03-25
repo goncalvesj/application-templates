@@ -60,7 +60,7 @@ jobs:
       with:
         push: false
         context: ./DotNet-GraphQL-Rest-APIs
-        file: ./GraphQL.API/Dockerfile
+        file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
         tags: myimage:latest
         outputs: type=docker,dest=/tmp/myimage.tar
 
