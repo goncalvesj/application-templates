@@ -31,7 +31,7 @@ jobs:
       run: az --version
 
     - name: Azure Login
-      uses: Azure/login@v1.4.3
+      uses: Azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
