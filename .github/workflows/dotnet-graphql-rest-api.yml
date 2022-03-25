@@ -51,7 +51,7 @@ jobs:
     - name: Build and Push the GraphQL Docker image
       run: |
         cd DotNet-GraphQL-Rest-APIs
-        docker build . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID --output type=docker,dest=/tmp/myimage.tar
+        docker build -o type=docker,dest=/tmp/myimage.tar . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
     # - name: Build and Push the REST Docker image
     #   run: |
