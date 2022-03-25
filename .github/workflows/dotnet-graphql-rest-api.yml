@@ -8,7 +8,7 @@ on:
         required: true
         default: 'Testing'
   push:
-    branches: [ master, gh-actions ]
+    branches: [ master ]
     # paths:
     #   - 'DotNet-GraphQL-Rest-APIs/*'
   pull_request:
@@ -30,9 +30,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Test Az
-      run: az --version
 
     - name: Azure Login
       uses: Azure/login@v1
