@@ -48,10 +48,19 @@ jobs:
     #     echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
     #     echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
-    - name: Build and Push the GraphQL Docker image
-      run: |
-        cd DotNet-GraphQL-Rest-APIs
-        docker build -o type=docker,dest=/tmp/myimage.tar . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+    # - name: Build and Push the GraphQL Docker image
+    #   run: |
+    #     cd DotNet-GraphQL-Rest-APIs
+    #     docker build -o type=docker,dest=/tmp/myimage.tar . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: false
+        context: ./DotNet-GraphQL-Rest-APIs
+        file: ./GraphQL.API/Dockerfile
+        tags: ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        outputs: type=docker,dest=/tmp/myimage.tar
 
     # - name: Build and Push the REST Docker image
     #   run: |
@@ -59,7 +68,7 @@ jobs:
     #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
   
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.0.0
       with:
         name: myimage
         path: /tmp/myimage.tar
