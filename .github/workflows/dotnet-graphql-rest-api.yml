@@ -26,7 +26,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
+    - name: Test Az
+      run: az --version
+
     - name: Azure Login
       uses: Azure/login@v1.4.3
       with:
