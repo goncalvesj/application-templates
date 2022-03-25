@@ -44,11 +44,6 @@ jobs:
         az --version
         az acr login -n cloud5
 
-    # - name: Docker Login
-    #   uses: azure/docker-login@v1
-    #   with:
-    #     login-server: cloud5.azurecr.io
-
     # - name: Log in to GitHub container registry
     #   uses: docker/login-action@v1.10.0
     #   with:
@@ -56,11 +51,11 @@ jobs:
     #     username: ${{ github.actor }}
     #     password: ${{ github.token }}
     
-    # - name: Build the GraphQL Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f GraphQL.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
-    #     docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+    - name: Build the GraphQL Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f GraphQL.API/Dockerfile -t cloud5.azurecr.io/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+        docker push cloud5.azurecr.io/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
     # - name: Build the REST Docker image
     #   run: |
