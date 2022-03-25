@@ -8,40 +8,98 @@ on:
         required: true
         default: 'Testing'
   push:
-    branches: [ master ]
+    branches:
+      - master
     paths:
       - 'DotNet-GraphQL-Rest-APIs/*'
+      - '.github/workflows/dotnet-graphql-rest-api.yml'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
     paths:
       - 'DotNet-GraphQL-Rest-APIs/*'
+      - '.github/workflows/dotnet-graphql-rest-api.yml'
 
 env:
-  GRAPHQL_IMAGE_NAME: "graphql-api"
-  REST_IMAGE_NAME: "rest-api"
+  GRAPHQL_IMAGE_NAME: 'sw-graphql'
+  REST_IMAGE_NAME: 'sw-rest'
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Log in to GitHub container registry
-      uses: docker/login-action@v1.10.0
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ github.token }}
-    
-    - name: Build the GraphQL Docker image
-      run: |
-        cd DotNet-GraphQL-Rest-APIs
-        docker build . -f GraphQL.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
-        docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+      - name: Set Envs
+        run: |
+          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
-    - name: Build the REST Docker image
-      run: |
-        cd DotNet-GraphQL-Rest-APIs
-        docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
-        docker push ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.6.0
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          context: ./DotNet-GraphQL-Rest-APIs
+          file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
+          tags: ${{ env.GRAPH_IMAGE }}
+          outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          context: ./DotNet-GraphQL-Rest-APIs
+          file: ./DotNet-GraphQL-Rest-APIs/Rest.API/Dockerfile
+          tags: ${{ env.REST_IMAGE }}
+          outputs: type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: docker-images
+          path: /tmp/*.tar
+
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure ACR Login
+        run: |
+          az acr login -n ${{ secrets.AZURE_ACR_NAME }}
+
+      - name: Set Envs
+        run: |
+          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-images
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
+          docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
+          docker push $GRAPH_IMAGE
+          docker push $REST_IMAGE
