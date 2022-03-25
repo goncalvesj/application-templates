@@ -20,6 +20,10 @@ env:
   GRAPHQL_IMAGE_NAME: "graphql-api"
   REST_IMAGE_NAME: "rest-api"
 
+permissions:
+      id-token: write
+      contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
