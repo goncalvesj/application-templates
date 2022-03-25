@@ -43,15 +43,16 @@ jobs:
     #   run: | 
     #     az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    # - name: Set Envs
-    #   run: |
-    #     echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-    #     echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+    - name: Set Envs
+      run: |
+        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
     # - name: Build and Push the GraphQL Docker image
     #   run: |
     #     cd DotNet-GraphQL-Rest-APIs
     #     docker build -o type=docker,dest=/tmp/myimage.tar . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1.6.0
 
@@ -61,7 +62,7 @@ jobs:
         push: false
         context: ./DotNet-GraphQL-Rest-APIs
         file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
-        tags: myimage:latest
+        tags: ${{ env.GRAPH_IMAGE }}
         outputs: type=docker,dest=/tmp/myimage.tar
 
     # - name: Build and Push the REST Docker image
