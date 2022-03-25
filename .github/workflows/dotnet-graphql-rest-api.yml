@@ -101,7 +101,7 @@ jobs:
 
     - name: Load Docker image
       run: |
-        docker load /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
+        docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
         docker image ls -a
 
     # - name: Build and Push the GraphQL Docker image
