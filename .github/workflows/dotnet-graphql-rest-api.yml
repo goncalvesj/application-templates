@@ -63,7 +63,7 @@ jobs:
         context: ./DotNet-GraphQL-Rest-APIs
         file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
         tags: ${{ env.GRAPH_IMAGE }}
-        outputs: type=docker,dest=/tmp/myimage.tar
+        outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
 
     # - name: Build and Push the REST Docker image
     #   run: |
@@ -74,7 +74,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: myimage
-        path: /tmp/myimage.tar
+        path: /tmp/*.tar
 
   deploy:
     needs: build
@@ -101,7 +101,7 @@ jobs:
 
     - name: Load Docker image
       run: |
-        docker load --input /tmp/myimage.tar
+        docker load /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
         docker image ls -a
 
     # - name: Build and Push the GraphQL Docker image
