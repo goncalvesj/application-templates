@@ -25,7 +25,8 @@ permissions:
       contents: read
 
 jobs:
-  build:
+  build-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -38,14 +39,14 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     
-    - name: Test Az Login
+    - name: Azure ACR Login
       run: | 
         az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    - name: Set env
-      run: echo "GITHUB_SHA_SHORT=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-    - name: Test
-      run: echo $GITHUB_SHA_SHORT
+    - name: Set Envs
+      run: |
+        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
     # - name: Log in to GitHub container registry
     #   uses: docker/login-action@v1.10.0
@@ -53,14 +54,14 @@ jobs:
     #     registry: ghcr.io
     #     username: ${{ github.actor }}
     #     password: ${{ github.token }}
-    
-    # - name: Build the GraphQL Docker image
-    #   run: |
-    #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
-    #     docker push ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID
 
-    # - name: Build the REST Docker image
+    - name: Build and Push the GraphQL Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f GraphQL.API/Dockerfile -t $GRAPH_IMAGE
+        docker push $GRAPH_IMAGE
+
+    # - name: Build and Push the REST Docker image
     #   run: |
     #     cd DotNet-GraphQL-Rest-APIs
     #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
