@@ -43,16 +43,27 @@ jobs:
     #   run: | 
     #     az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    - name: Set Envs
-      run: |
-        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+    # - name: Set Envs
+    #   run: |
+    #     echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+    #     echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
 
-    # - name: Build and Push the GraphQL Docker image
+    - name: Build and Push the GraphQL Docker image
+      run: |
+        cd DotNet-GraphQL-Rest-APIs
+        docker build . -f GraphQL.API/Dockerfile -t ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID --output type=docker,dest=/tmp/myimage.tar
+
+    # - name: Build and Push the REST Docker image
     #   run: |
     #     cd DotNet-GraphQL-Rest-APIs
-    #     docker build . -f GraphQL.API/Dockerfile -t $GRAPH_IMAGE
+    #     docker build . -f Rest.API/Dockerfile -t ghcr.io/$GITHUB_REPOSITORY_OWNER/$REST_IMAGE_NAME:$GITHUB_RUN_ID
   
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: myimage
+        path: /tmp/myimage.tar
+
   deploy:
     needs: build
     name: Deploy
@@ -70,9 +81,16 @@ jobs:
     #   run: | 
     #     az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    - name: Test Envs
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: myimage
+        path: /tmp
+
+    - name: Load Docker image
       run: |
-        echo "${{ env.GRAPH_IMAGE }}"
+        docker load --input /tmp/myimage.tar
+        docker image ls -a
 
     # - name: Build and Push the GraphQL Docker image
     #   run: |
