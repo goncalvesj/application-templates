@@ -25,13 +25,40 @@ permissions:
       contents: read
 
 jobs:
-  build-deploy:
-    name: Build and Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
+    # - name: Azure Login
+    #   uses: Azure/login@v1
+    #   with:
+    #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+    #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+    #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # - name: Azure ACR Login
+    #   run: | 
+    #     az acr login -n ${{ secrets.AZURE_ACR_NAME }}
+
+    - name: Set Envs
+      run: |
+        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+
+    # - name: Build and Push the GraphQL Docker image
+    #   run: |
+    #     cd DotNet-GraphQL-Rest-APIs
+    #     docker build . -f GraphQL.API/Dockerfile -t $GRAPH_IMAGE
+  
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Azure Login
       uses: Azure/login@v1
       with:
@@ -43,23 +70,13 @@ jobs:
       run: | 
         az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-    - name: Set Envs
+    - name: Test Envs
       run: |
-        echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-        echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+        echo $GRAPH_IMAGE
 
-    # - name: Log in to GitHub container registry
-    #   uses: docker/login-action@v1.10.0
-    #   with:
-    #     registry: ghcr.io
-    #     username: ${{ github.actor }}
-    #     password: ${{ github.token }}
-
-    - name: Build and Push the GraphQL Docker image
-      run: |
-        cd DotNet-GraphQL-Rest-APIs
-        docker build . -f GraphQL.API/Dockerfile -t $GRAPH_IMAGE
-        docker push $GRAPH_IMAGE
+    # - name: Build and Push the GraphQL Docker image
+    #   run: |
+    #     docker push $GRAPH_IMAGE
 
     # - name: Build and Push the REST Docker image
     #   run: |
