@@ -68,6 +68,7 @@ jobs:
     needs: build
     name: Deploy
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - name: Azure Login
@@ -96,6 +97,5 @@ jobs:
         run: |
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-          docker image ls -a
           docker push $GRAPH_IMAGE
           docker push $REST_IMAGE
