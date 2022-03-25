@@ -9,12 +9,12 @@ on:
         default: 'Testing'
   push:
     branches: [ master, gh-actions ]
-    paths:
-      - 'DotNet-GraphQL-Rest-APIs/*'
+    # paths:
+    #   - 'DotNet-GraphQL-Rest-APIs/*'
   pull_request:
     branches: [ master ]
-    paths:
-      - 'DotNet-GraphQL-Rest-APIs/*'
+    # paths:
+    #   - 'DotNet-GraphQL-Rest-APIs/*'
 
 env:
   GRAPHQL_IMAGE_NAME: "graphql-api"
