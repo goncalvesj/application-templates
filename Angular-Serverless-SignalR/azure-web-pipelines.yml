@@ -1,0 +1,83 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - SignalR-Web/*
+      - azure-web-pipelines.yml
+
+stages:
+  - stage: Build
+    displayName: 'Build'
+    jobs:
+      - job: Build
+        displayName: 'Build'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: Docker@2
+            displayName: 'Docker Build'
+            inputs:
+              containerRegistry: 'Docker Hub - Goncalvesj'
+              repository: 'goncalvesj/signalr-web'
+              command: build
+              Dockerfile: '**/Dockerfile'
+              tags: $(Build.BuildNumber)
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Charts'
+            inputs:
+              targetPath: 'Helm/signalr-web'
+              artifact: 'charts'
+
+  - stage: Deploy
+    displayName: 'Deploy'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+      - deployment: Deploy
+        displayName: 'Deploy'
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'V1-JoaoGoncalves-AKS'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  clean: true
+                - task: Bash@3
+                  displayName: 'Update Env Vars'
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      export API_URL="https://v1-joaogoncalves-signalr-functions.azurewebsites.net/api";
+                      envsubst < ./s/SignalR-Web/src/env.template.js > ./s/SignalR-Web/src/env.js
+                    workingDirectory: $(Pipeline.Workspace)
+                - task: Docker@2
+                  displayName: 'Docker Build'
+                  inputs:
+                    containerRegistry: 'Docker Hub - Goncalvesj'
+                    repository: 'goncalvesj/signalr-web'
+                    command: buildAndPush
+                    Dockerfile: '**/Dockerfile'
+                    tags: $(Build.BuildNumber)
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: 3.1.0
+                - task: Kubernetes@1
+                  displayName: 'AKS Login'
+                  inputs:
+                    connectionType: 'Kubernetes Service Connection'
+                    kubernetesServiceEndpoint: 'V1-JoaoGoncalves-AKS-V1-JoaoGoncalves-AKS-default-1583626081772'
+                    command: 'login'
+                - task: Bash@3
+                  displayName: 'Helm Package and Upgrade'
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      helm package ./charts --app-version $(Build.BuildNumber)
+                      helmReleaseName="sw-0"
+                      packageFile=$(find . -name "*.tgz")
+                      helm upgrade $helmReleaseName $packageFile
+                    workingDirectory: $(Pipeline.Workspace)

@@ -1,0 +1,54 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - SignalR.Functions/*
+      - azure-functions-pipelines.yml
+
+stages:
+- stage: Build
+  displayName: 'Build'
+  jobs:
+  - job: Build
+    displayName: 'Build'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Build project copy'
+        inputs:
+          command: publish
+          publishWebProjects: false
+          projects: '**/*.csproj'
+          arguments: '--output $(Build.ArtifactStagingDirectory) --configuration Release'
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Function'
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: 'drop'
+
+- stage: Deploy
+  displayName: 'Deploy'
+  jobs:
+  - deployment: Deploy
+    displayName: 'Deploy'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'V1-JoaoGoncalves-Functions'
+    strategy:      
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Pipeline Artifact'
+            inputs:
+              artifactName: drop
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Visual Studio Enterprise – MPN'
+              appType: 'functionApp'
+              WebAppName: 'V1-JoaoGoncalves-SignalR-Functions'
+              packageForLinux: '$(Pipeline.Workspace)/*.zip'
