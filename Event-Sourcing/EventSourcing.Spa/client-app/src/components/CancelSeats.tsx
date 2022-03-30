@@ -38,7 +38,10 @@ export class CancelSeats extends Component<
       body: JSON.stringify(model),
     };
 
-    const response = await fetch('Conference', requestOptions);
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}UpdateConference`,
+      requestOptions
+    );
     if (response.status !== 200) {
       alert(await response.text());
       return;

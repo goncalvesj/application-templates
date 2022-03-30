@@ -38,7 +38,10 @@ export class CreateConference extends Component<
       body: JSON.stringify(model),
     };
 
-    const response = await fetch('Conference', requestOptions);
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}CreateConference`,
+      requestOptions
+    );
     const data = await response.json();
 
     console.dir(data);

@@ -22,7 +22,10 @@ export class Events extends Component<IEventsProps, EventsState> {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
-    const response = await fetch('conference', requestOptions);
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}GetAllConferences`,
+      requestOptions
+    );
     const data = await response.json();
 
     this.setState(() => ({

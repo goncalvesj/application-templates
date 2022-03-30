@@ -15,7 +15,7 @@ export class Projections extends Component<IProps, State> {
     loading: true,
     id: '',
     selectValue: '',
-  };  
+  };
 
   loadData = async (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({ selectValue: e.target.value });
@@ -24,7 +24,10 @@ export class Projections extends Component<IProps, State> {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       };
-      const response = await fetch('conference', requestOptions);
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}GetAllConferences`,
+        requestOptions
+      );
       const data = await response.json();
 
       this.setState(() => ({
