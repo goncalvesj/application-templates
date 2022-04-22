@@ -27,7 +27,7 @@ export class AppComponent {
 
   startChat() {
     const connection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiUrl}?oid=${this.userName}`)
+      .withUrl(`${environment.apiUrl}?oid=${this.userName}`, { withCredentials: false })
       .configureLogging(LogLevel.Information)
       .build();
 
@@ -56,7 +56,7 @@ export class AppComponent {
       }
     );
 
-    connection.on('ReceiveMessage', (data: MessageObject) => {
+    connection.on('ReceivedMessage', (data: MessageObject) => {
       this.messages.push(data);
     });
   }
