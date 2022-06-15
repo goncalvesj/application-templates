@@ -9,4 +9,11 @@ namespace SignalR.Functions
         [JsonProperty("text")]
         public string Text { get; set; }
     }
+
+    public class AugmentedMessageObject
+    {
+        public string UserId { get; set; }
+        public string Text { get; set; }
+        public string ExtraData { get; set; }
+    }
 }
