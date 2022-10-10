@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  netcore.servicebus.worker:
+    image:  netcore-servicebus-worker
+    environment:
+     - SERVICEBUS_QUEUE_NAME=input     
+     - SERVICEBUS_QUEUE_CONNECTIONSTRING=Endpoint=
+     - STORAGE_CONNECTIONSTRING=DefaultEndpointsProtocol=
+     - APPLICATIONINSIGHTS_CONNECTION_STRING=
+    build:
+      context: .
+      dockerfile: NetCore.ServiceBus.Worker/Dockerfile
