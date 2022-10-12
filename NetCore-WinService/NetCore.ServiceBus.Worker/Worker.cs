@@ -13,6 +13,7 @@ namespace NetCore.ServiceBus.Worker
 
         private BlobContainerClient _inputBlobContainerClient;
         private BlobContainerClient _outputBlobContainerClient;
+        private double _seconds;
 
         protected IConfiguration Configuration { get; }
 
@@ -28,8 +29,9 @@ namespace NetCore.ServiceBus.Worker
             var inputQueueName = Configuration.GetValue<string>("SERVICEBUS_QUEUE_NAME");
             var inputQueueConnectionString = Configuration.GetValue<string>("SERVICEBUS_QUEUE_CONNECTIONSTRING");
             var storageConnectionString = Configuration.GetValue<string>("STORAGE_CONNECTIONSTRING");
+            _seconds = double.Parse(Configuration.GetValue<string>("PROCESSING_TIME_SECONDS"));
 
-            _logger.LogInformation("Authentication by using connection string");
+            //_logger.LogInformation("Authentication by using connection string");
 
             var blobServiceClient = new BlobServiceClient(storageConnectionString);
             _inputBlobContainerClient = blobServiceClient.GetBlobContainerClient("input");
@@ -42,23 +44,23 @@ namespace NetCore.ServiceBus.Worker
             messageProcessor.ProcessMessageAsync += HandleMessageAsync;
             messageProcessor.ProcessErrorAsync += HandleReceivedExceptionAsync;
 
-            _logger.LogInformation($"Starting message pump on queue {inputQueueName} in namespace {messageProcessor.FullyQualifiedNamespace}");
+            //_logger.LogInformation($"Starting message pump on queue {inputQueueName} in namespace {messageProcessor.FullyQualifiedNamespace}");
 
             await messageProcessor.StartProcessingAsync(stoppingToken);
 
-            _logger.LogInformation("Message pump started");
+            //_logger.LogInformation("Message pump started");
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
+                //_logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
                 await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
             }
 
-            _logger.LogInformation("Closing message pump");
+            //_logger.LogInformation("Closing message pump");
 
             await messageProcessor.CloseAsync(cancellationToken: stoppingToken);
 
-            _logger.LogInformation($"Message pump closed : {DateTimeOffset.UtcNow}");
+            //_logger.LogInformation($"Message pump closed : {DateTimeOffset.UtcNow}");
         }
 
         private Task HandleReceivedExceptionAsync(ProcessErrorEventArgs arg)
@@ -81,7 +83,7 @@ namespace NetCore.ServiceBus.Worker
 
                     if (order != null)
                     {
-                        _logger.LogInformation($"Processing {order.subject}");
+                        //_logger.LogInformation($"Processing {order.subject}");
 
                         // Download File from Input Container
 
@@ -92,16 +94,16 @@ namespace NetCore.ServiceBus.Worker
                         var file = await inputBlobClient.DownloadContentAsync();
 
                         // Simulate work on file
-                        await Task.Delay(TimeSpan.FromSeconds(2), arg.CancellationToken);
+                        await Task.Delay(TimeSpan.FromSeconds(_seconds), arg.CancellationToken);
 
                         // Upload File to Destination Container
-                        var outputBlobClient = _outputBlobContainerClient.GetBlobClient("test.png");
+                        var outputBlobClient = _outputBlobContainerClient.GetBlobClient($"{Guid.NewGuid()}.png");
                         await outputBlobClient.UploadAsync(file.Value.Content, true);
 
                         // Delete File from Input Container
                         await inputBlobClient.DeleteIfExistsAsync();
 
-                        _logger.LogInformation($"{order.subject} processed");
+                        //_logger.LogInformation($"{order.subject} processed");
                     }
                     else
                     {
@@ -116,7 +118,10 @@ namespace NetCore.ServiceBus.Worker
 
                     await arg.CompleteMessageAsync(arg.Message);
 
-                    _telemetryClient.TrackEvent(completeMsg);
+                    _telemetryClient.TrackEvent(new EventTelemetry
+                    {
+                        Name = completeMsg
+                    });
                 }
             }
             catch (Exception ex)

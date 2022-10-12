@@ -3,7 +3,10 @@ using NetCore.ServiceBus.Worker;
 IHost host = Host.CreateDefaultBuilder(args)
      .ConfigureAppConfiguration((hostingContext, config) =>
      {
+         var secretsPath = Environment.GetEnvironmentVariable("CONFIG_FILES_PATH");
+         
          config.AddEnvironmentVariables();
+         config.AddKeyPerFile(directoryPath: $"{secretsPath}", optional: true);
      })
       .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
       {
