@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.ServiceBus.Worker",
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Docker", "Docker.dcproj", "{B74F58D6-EB10-4116-8845-7455B83145E3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.SingleJob", "Net.ServiceBus.SingleJob\Net.ServiceBus.SingleJob.csproj", "{3A4B1CC9-242B-470E-89BC-1D940555A809}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{86346AA2-4931-4B17-9201-7B4973EA32BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B74F58D6-EB10-4116-8845-7455B83145E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B74F58D6-EB10-4116-8845-7455B83145E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4B1CC9-242B-470E-89BC-1D940555A809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4B1CC9-242B-470E-89BC-1D940555A809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4B1CC9-242B-470E-89BC-1D940555A809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4B1CC9-242B-470E-89BC-1D940555A809}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
