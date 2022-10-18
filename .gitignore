@@ -265,3 +265,4 @@ __pycache__/
 .vscode
 *.pubxml
 /NetCore-WinService/docker-compose.override.yml
+/AzureServiceBus-Worker-Notification/docker-compose.override.yml
