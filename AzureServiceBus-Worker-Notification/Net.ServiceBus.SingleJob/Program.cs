@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using Net.ServiceBus.Entities;
+using Newtonsoft.Json;
 
 var secretsPath = Environment.GetEnvironmentVariable("CONFIG_FILES_PATH");
 
@@ -52,10 +54,37 @@ using (telemetryClient.StartOperation<RequestTelemetry>("singlejob-operation"))
         // the received message is a different type as it contains some service set properties
         var receivedMessage = await receiver.ReceiveMessageAsync();
 
-        string body = receivedMessage.Body.ToString();
+        var body = receivedMessage.Body.ToString();
         logger.LogWarning("Response from queue is:" + body); // this will be captured by Application Insights.
 
-        Console.WriteLine(body);
+        var data = JsonConvert.DeserializeObject<Root>(body);
+        if (data != null)
+        {
+            // Download File from Input Container
+
+            var blobSplit = data.data.url.Split("/");
+            var name = blobSplit[^1];
+            var inputBlobClient = _inputBlobContainerClient.GetBlobClient(name);
+
+            var file = await inputBlobClient.DownloadContentAsync();
+
+            // Simulate work on file
+            await Task.Delay(TimeSpan.FromSeconds(_seconds));
+
+            // Upload File to Destination Container
+            var outputBlobClient = _outputBlobContainerClient.GetBlobClient($"{Guid.NewGuid()}.png");
+            
+            await outputBlobClient.UploadAsync(file.Value.Content, true);
+
+            // Delete File from Input Container
+            await inputBlobClient.DeleteIfExistsAsync();
+        }
+        else
+        {
+            logger.LogError(
+                "Unable to deserialize to message contract {ContractName} for message {MessageBody}",
+                typeof(Root), body);
+        }        
 
         var completeMsg = $"Single Job V3 - Message {body} processed";
         telemetryClient.TrackEvent(completeMsg);
@@ -71,6 +100,6 @@ using (telemetryClient.StartOperation<RequestTelemetry>("singlejob-operation"))
     {
         telemetryClient.Flush();
         await receiver.CloseAsync();
-        await Task.Delay(TimeSpan.FromSeconds(_seconds));
+        await Task.Delay(TimeSpan.FromSeconds(1));
     }
 }
