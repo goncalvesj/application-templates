@@ -7,7 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Docker", "Docker.dcproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.SingleJob", "Net.ServiceBus.SingleJob\Net.ServiceBus.SingleJob.csproj", "{EA7F3B7B-23D2-4E23-A4EE-43000AD43B71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.ServiceBus.Worker", "NetCore.ServiceBus.Worker\NetCore.ServiceBus.Worker.csproj", "{9771FF75-3DA4-45B9-BC2B-E11ADF150F0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.Notification.Functions", "Net.ServiceBus.Notification.Functions\Net.ServiceBus.Notification.Functions.csproj", "{F1421E1E-4648-4D45-8C6F-1C1F9C76293D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.Entities", "Net.ServiceBus.Entities\Net.ServiceBus.Entities.csproj", "{31680663-5C68-45F8-964C-275A0C0FE3CA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.Worker", "Net.ServiceBus.Worker\Net.ServiceBus.Worker.csproj", "{B43436DE-8483-4288-93FB-EA4B2B06C02A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.ServiceBus.Client", "Net.ServiceBus.Client\Net.ServiceBus.Client.csproj", "{5A8CEA93-B292-41B4-9232-AE384B0BCB73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,17 +22,27 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B74F58D6-EB10-4116-8845-7455B83145E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B74F58D6-EB10-4116-8845-7455B83145E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B74F58D6-EB10-4116-8845-7455B83145E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B74F58D6-EB10-4116-8845-7455B83145E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA7F3B7B-23D2-4E23-A4EE-43000AD43B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA7F3B7B-23D2-4E23-A4EE-43000AD43B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA7F3B7B-23D2-4E23-A4EE-43000AD43B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA7F3B7B-23D2-4E23-A4EE-43000AD43B71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9771FF75-3DA4-45B9-BC2B-E11ADF150F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9771FF75-3DA4-45B9-BC2B-E11ADF150F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9771FF75-3DA4-45B9-BC2B-E11ADF150F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9771FF75-3DA4-45B9-BC2B-E11ADF150F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1421E1E-4648-4D45-8C6F-1C1F9C76293D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1421E1E-4648-4D45-8C6F-1C1F9C76293D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1421E1E-4648-4D45-8C6F-1C1F9C76293D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1421E1E-4648-4D45-8C6F-1C1F9C76293D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31680663-5C68-45F8-964C-275A0C0FE3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31680663-5C68-45F8-964C-275A0C0FE3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31680663-5C68-45F8-964C-275A0C0FE3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31680663-5C68-45F8-964C-275A0C0FE3CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B43436DE-8483-4288-93FB-EA4B2B06C02A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B43436DE-8483-4288-93FB-EA4B2B06C02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B43436DE-8483-4288-93FB-EA4B2B06C02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B43436DE-8483-4288-93FB-EA4B2B06C02A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A8CEA93-B292-41B4-9232-AE384B0BCB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8CEA93-B292-41B4-9232-AE384B0BCB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8CEA93-B292-41B4-9232-AE384B0BCB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8CEA93-B292-41B4-9232-AE384B0BCB73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
