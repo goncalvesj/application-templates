@@ -1,6 +1,6 @@
 {
-  "name": "BlazorApp1",
-  "short_name": "BlazorApp1",
+  "name": "Net.ServiceBus.Client",
+  "short_name": "Net.ServiceBus.Client",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
