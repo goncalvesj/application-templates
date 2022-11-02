@@ -5,16 +5,16 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["NetCore.ServiceBus.Worker/NetCore.ServiceBus.Worker.csproj", "NetCore.ServiceBus.Worker/"]
-RUN dotnet restore "NetCore.ServiceBus.Worker/NetCore.ServiceBus.Worker.csproj"
+COPY ["Net.ServiceBus.Worker/Net.ServiceBus.Worker.csproj", "Net.ServiceBus.Worker/"]
+RUN dotnet restore "Net.ServiceBus.Worker/Net.ServiceBus.Worker.csproj"
 COPY . .
-WORKDIR "/src/NetCore.ServiceBus.Worker"
-RUN dotnet build "NetCore.ServiceBus.Worker.csproj" -c Release -o /app/build
+WORKDIR "/src/Net.ServiceBus.Worker"
+RUN dotnet build "Net.ServiceBus.Worker.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NetCore.ServiceBus.Worker.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Net.ServiceBus.Worker.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NetCore.ServiceBus.Worker.dll"]
+ENTRYPOINT ["dotnet", "Net.ServiceBus.Worker.dll"]

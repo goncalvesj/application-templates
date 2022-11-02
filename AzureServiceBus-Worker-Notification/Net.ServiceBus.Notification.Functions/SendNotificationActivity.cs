@@ -27,7 +27,7 @@ namespace Net.ServiceBus.Notification.Functions
                     Arguments = new[] { name }
                 });
 
-            _log.LogInformation("Mock Email sent");
+            _log.LogInformation("Mock Notification sent");
         }
     }
 }
