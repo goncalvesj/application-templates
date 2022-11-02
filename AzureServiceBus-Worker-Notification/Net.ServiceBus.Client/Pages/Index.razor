@@ -8,6 +8,8 @@
 
 <label>@connectedMessage</label>
 
+<p role="status">Current count: @currentCount</p>
+
 <ul id="messagesList">
     @foreach (var message in messages)
     {
@@ -18,17 +20,23 @@
 @code {
     private HubConnection? hubConnection;
     private List<string> messages = new List<string>();
+    private int currentCount = 0;
 
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-        .WithUrl("http://localhost:7244/api/")
+        .WithUrl("https://lz1functions.azurewebsites.net/api/")
         .Build();
 
         hubConnection.On<string>("ReceiveMessage", (message) =>
         {
             var encodedMsg = $"{message}";
             messages.Add(encodedMsg);
+            IncrementCount();
             InvokeAsync(StateHasChanged);
         });
 
