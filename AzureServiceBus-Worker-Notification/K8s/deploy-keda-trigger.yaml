@@ -1,0 +1,10 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: trigger-auth-service-bus
+  namespace: keda-dotnet-sample
+spec:
+  secretTargetRef:
+  - parameter: connection
+    name: keda-monitor-secret
+    key: servicebus-connectionstring
