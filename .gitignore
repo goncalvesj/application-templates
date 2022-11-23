@@ -266,3 +266,4 @@ __pycache__/
 *.pubxml
 /NetCore-WinService/docker-compose.override.yml
 /AzureServiceBus-Worker-Notification/docker-compose.override.yml
+/AzureServiceBus-Worker-Notification/Net.ServiceBus.Client/.env
