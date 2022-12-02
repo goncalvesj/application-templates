@@ -30,6 +30,32 @@ Deployment files for AKS
 
 - [deploy-kv-provider.yaml](K8s/deploy-kv-provider.yaml) - deploys the Key Vault object that maps to KV secrets to be used in the apps
 
+The applications are deployed to the Job Node pool which scales down to zero by using the following yaml properties:
+
+```yaml
+tolerations:
+- key: "kubernetes.azure.com/scalesetpriority"
+  operator: "Equal"
+  value: "spot"
+  effect: "NoSchedule"
+nodeSelector:
+  workload: jobs
+```
+
+If you want to deploy the apps to the Virtual node pool, swap the above properties with this.
+
+```yaml
+tolerations:
+- key: virtual-kubelet.io/provider
+  operator: Exists
+- key: azure.com/aci
+  effect: NoSchedule
+nodeSelector:
+  kubernetes.io/role: agent
+  beta.kubernetes.io/os: linux
+  type: virtual-kubelet
+```
+
 ## Net.ServiceBus.Client
 
 Blazor client for real time notifications

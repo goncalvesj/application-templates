@@ -49,4 +49,4 @@ spec:
           value: "spot"
           effect: "NoSchedule"
       nodeSelector:
-        workload: apps
+        workload: jobs

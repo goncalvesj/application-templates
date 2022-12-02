@@ -26,7 +26,7 @@ spec:
             value: "spot"
             effect: "NoSchedule"
         nodeSelector:
-          workload: apps
+          workload: jobs
         containers:
         - name: single-consumer-job
           image: jprgacr.azurecr.io/net-servicebus-singlejob:dev
