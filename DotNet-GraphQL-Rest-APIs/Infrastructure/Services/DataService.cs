@@ -38,4 +38,18 @@ public class DataService
 
         return people;
     }
+
+    public async Task<List<Cast>> GetCastAsync()
+    {
+        var films = await GetFilmsAsync();
+        var people = await GetPeopleAsync();
+
+        var castList = films.Select(f => new Cast
+        {
+            Title = f.Fields.Title,
+            Characters = f.Fields.Characters.Select(f => people.SingleOrDefault(p => p.Pk == f).Fields.Name).ToList()
+        }).ToList();
+
+        return castList;
+    }
 }
