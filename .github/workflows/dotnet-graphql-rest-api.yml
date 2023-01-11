@@ -46,7 +46,8 @@ jobs:
         uses: docker/setup-buildx-action@v2.2.1
     
       - name: Build images
-        run: |          
+        run: |
+          ls -a
           docker build -f $DOCKER_CONTEXT/Rest.API/Dockerfile -o type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar $DOCKER_CONTEXT
       #- name: Build and push container image to registry
       #  uses: docker/build-push-action@v3.2.0
