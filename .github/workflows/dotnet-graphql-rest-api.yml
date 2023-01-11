@@ -48,8 +48,8 @@ jobs:
     
       - name: Build images
         run: |
-          docker build -f $APP_CONTEXT/GraphQL.API/Dockerfile -o type=tar,dest=${{ env.OUTPUT_FOLDER }}/${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} $APP_CONTEXT
-          docker build -f $APP_CONTEXT/Rest.API/Dockerfile -o type=tar,dest=${{ env.OUTPUT_FOLDER }}/${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} $APP_CONTEXT
+          docker buildx build -f $APP_CONTEXT/GraphQL.API/Dockerfile -o type=docker,dest=${{ env.OUTPUT_FOLDER }}/${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} $APP_CONTEXT
+          docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile -o type=docker,dest=${{ env.OUTPUT_FOLDER }}/${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} $APP_CONTEXT
           cd $APP_CONTEXT
           ls -a
       #- name: Build and push container image to registry
