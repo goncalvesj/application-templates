@@ -93,9 +93,9 @@ jobs:
       - name: Set Envs
         run: |
           echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "GRAPH_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:LATEST)" >> $GITHUB_ENV
+          echo "GRAPH_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:latest)" >> $GITHUB_ENV
           echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "REST_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:LATEST)" >> $GITHUB_ENV
+          echo "REST_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:latest)" >> $GITHUB_ENV
 
       - name: Download artifact
         uses: actions/download-artifact@v3.0.2
