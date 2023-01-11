@@ -23,6 +23,7 @@ on:
 env:
   GRAPHQL_IMAGE_NAME: 'sw-graphql'
   REST_IMAGE_NAME: 'sw-rest'
+  DOCKER_CONTEXT: './DotNet-GraphQL-Rest-APIs'
 
 permissions:
   id-token: write
@@ -43,24 +44,27 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.2.1
+    
+      - name: Build images
+        run: |          
+          docker build -f $DOCKER_CONTEXT/Rest.API/Dockerfile -o type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar $DOCKER_CONTEXT
+      #- name: Build and push container image to registry
+      #  uses: docker/build-push-action@v3.2.0
+      #  with:
+      #    push: false
+      #    context: ./DotNet-GraphQL-Rest-APIs
+      #    file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
+      #    tags: ${{ env.GRAPH_IMAGE }}
+      #    outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
 
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v3.2.0
-        with:
-          push: false
-          context: ./DotNet-GraphQL-Rest-APIs
-          file: ./DotNet-GraphQL-Rest-APIs/GraphQL.API/Dockerfile
-          tags: ${{ env.GRAPH_IMAGE }}
-          outputs: type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
-
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v3.2.0
-        with:
-          push: false
-          context: ./DotNet-GraphQL-Rest-APIs
-          file: ./DotNet-GraphQL-Rest-APIs/Rest.API/Dockerfile
-          tags: ${{ env.REST_IMAGE }}
-          outputs: type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar
+      #- name: Build and push container image to registry
+      #  uses: docker/build-push-action@v3.2.0
+      #  with:
+      #    push: false
+      #    context: ./DotNet-GraphQL-Rest-APIs
+      #    file: ./DotNet-GraphQL-Rest-APIs/Rest.API/Dockerfile
+      #    tags: ${{ env.REST_IMAGE }}
+      #    outputs: type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.0.0
