@@ -24,6 +24,7 @@ env:
   GRAPHQL_IMAGE_NAME: 'sw-graphql'
   REST_IMAGE_NAME: 'sw-rest'
   APP_CONTEXT: './DotNet-GraphQL-Rest-APIs'
+  OUTPUT_FOLDER: './DotNet-GraphQL-Rest-APIs/Output'
 
 permissions:
   id-token: write
@@ -46,9 +47,9 @@ jobs:
         uses: docker/setup-buildx-action@v2.2.1
     
       - name: Build images
-        run: |          
-          docker build -f $APP_CONTEXT/GraphQL.API/Dockerfile -o type=docker,dest=/tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} $APP_CONTEXT
-          docker build -f $APP_CONTEXT/Rest.API/Dockerfile -o type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} $APP_CONTEXT
+        run: |
+          docker build -f $APP_CONTEXT/GraphQL.API/Dockerfile -o type=docker,dest=${{ env.OUTPUT_FOLDER }}/${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} $APP_CONTEXT
+          docker build -f $APP_CONTEXT/Rest.API/Dockerfile -o type=docker,dest=${{ env.OUTPUT_FOLDER }}/${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} $APP_CONTEXT
           ls -a
       #- name: Build and push container image to registry
       #  uses: docker/build-push-action@v3.2.0
@@ -69,10 +70,11 @@ jobs:
       #    outputs: type=docker,dest=/tmp/${{ env.REST_IMAGE_NAME }}.tar
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: docker-images
-          path: /tmp/*.tar
+          path: ${{ env.OUTPUT_FOLDER }}/*.tar
+          if-no-files-found: error
 
   deploy:
     needs: build
