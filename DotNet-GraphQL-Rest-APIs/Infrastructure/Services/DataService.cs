@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 
 public class DataService
 {
@@ -44,12 +45,20 @@ public class DataService
         var films = await GetFilmsAsync();
         var people = await GetPeopleAsync();
 
-        var castList = films.Select(f => new Cast
-        {
-            Title = f.Fields.Title,
-            Characters = f.Fields.Characters.Select(f => people.SingleOrDefault(p => p.Pk == f).Fields.Name).ToList()
-        }).ToList();
+        var castList = from f in films
+                       select new Cast
+                       {
+                           Title = f.Fields.Title,
+                           Characters = GetCharacterNames(f.Fields.Characters, people)
+                       };
 
-        return castList;
+        return castList.ToList();
+    }
+
+    private IEnumerable<string> GetCharacterNames(IEnumerable<int> characterIds, IEnumerable<People> people)
+    {
+        return from c in characterIds
+               join p in people on c equals p.Pk
+               select p.Fields.Name;
     }
 }
