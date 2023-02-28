@@ -53,7 +53,7 @@ jobs:
           docker buildx build -f $APP_CONTEXT/GraphQL.API/Dockerfile --output type=docker,dest=${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} -t ${{ env.GRAPH_IMAGE_LATEST }} $APP_CONTEXT
           docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} -t ${{ env.REST_IMAGE_LATEST }} $APP_CONTEXT
 
-      - name: Pacakge Helm Charts
+      - name: Package Helm Charts
         run: |
           helm package $APP_CONTEXT/helm/sw-restapi
           helm package $APP_CONTEXT/helm/sw-graphapi
@@ -62,7 +62,9 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: output-artifacts
-          path: ./*.tar
+          path: |
+            ./*.tar
+            ./*.tgz
           if-no-files-found: error
 
   deploy:
