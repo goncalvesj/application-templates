@@ -11,14 +11,14 @@ on:
     branches:
       - master
     paths:
-      - 'DotNet-GraphQL-Rest-APIs/*'
+      - 'DotNet-GraphQL-Rest-APIs/**'
       - '.github/workflows/dotnet-graphql-rest-api.yml'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'DotNet-GraphQL-Rest-APIs/*'
-      - '.github/workflows/dotnet-graphql-rest-api.yml'
+  # pull_request:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - 'DotNet-GraphQL-Rest-APIs/**'
+  #     - '.github/workflows/dotnet-graphql-rest-api.yml'
 
 env:
   GRAPHQL_IMAGE_NAME: 'sw-graphql'
