@@ -8,6 +8,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Lists SW Characters
 app.MapGet("/people", async () =>
 {
     var data = new DataService();
