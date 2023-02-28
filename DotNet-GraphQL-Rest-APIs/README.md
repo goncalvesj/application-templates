@@ -2,7 +2,9 @@
 
 Apps that retrieves Star Wars films data from a JSON file using .NET 6 minimal APIs.
 
-DEMO: TODO
+TODO:
+
+- Build demo environment
 
 ## Infrastructure Class
 
@@ -36,4 +38,7 @@ Uses:
 
 ### Deploy
 
-TODO
+TODO:
+
+- Update Helm Charts
+- Add deploy step in pipeline
