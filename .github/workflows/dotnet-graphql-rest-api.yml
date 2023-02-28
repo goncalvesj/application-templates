@@ -62,10 +62,10 @@ jobs:
 
   deploy:
     needs: build
-    name: Deploy
+    name: Deploy to Dev
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-
+    environment: 
+      name: Development
     steps:
       - name: Azure Login
         uses: Azure/login@v1
