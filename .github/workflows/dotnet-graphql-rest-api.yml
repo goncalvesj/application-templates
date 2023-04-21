@@ -13,12 +13,6 @@ on:
     paths:
       - 'DotNet-GraphQL-Rest-APIs/**'
       - '.github/workflows/dotnet-graphql-rest-api.yml'
-  # pull_request:
-  #   branches:
-  #     - master
-  #   paths:
-  #     - 'DotNet-GraphQL-Rest-APIs/**'
-  #     - '.github/workflows/dotnet-graphql-rest-api.yml'
 
 env:
   GRAPHQL_IMAGE_NAME: 'sw-graphql'
@@ -37,21 +31,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3.3.0
 
-      - name: Set Envs
-        run: |
-          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "GRAPH_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:latest)" >> $GITHUB_ENV
-          
-          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "REST_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:latest)" >> $GITHUB_ENV
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.2.1
     
       - name: Build images
         run: |
-          docker buildx build -f $APP_CONTEXT/GraphQL.API/Dockerfile --output type=docker,dest=${{ env.GRAPHQL_IMAGE_NAME }}.tar -t ${{ env.GRAPH_IMAGE }} -t ${{ env.GRAPH_IMAGE_LATEST }} $APP_CONTEXT
-          docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar -t ${{ env.REST_IMAGE }} -t ${{ env.REST_IMAGE_LATEST }} $APP_CONTEXT
+          docker buildx build -f $APP_CONTEXT/GraphQL.API/Dockerfile \
+          --output type=docker,dest=${{ env.GRAPHQL_IMAGE_NAME }}.tar \
+          -t ${{ env.GRAPHQL_IMAGE_NAME }}:build $APP_CONTEXT
+
+          docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile \
+          --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar \
+          -t ${{ env.REST_IMAGE_NAME }}:build  $APP_CONTEXT
 
       - name: Package Helm Charts
         run: |
@@ -101,29 +92,23 @@ jobs:
 
       - name: Load and Push Docker image
         run: |
+          GRAPH_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME
+          REST_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME
+          
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-          docker image ls
-          docker push $GRAPH_IMAGE          
-          docker push $REST_IMAGE
-          docker push $GRAPH_IMAGE_LATEST
-          docker push $REST_IMAGE_LATEST
+          
+          docker push $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker push $GRAPH_TAG_FULLNAME:latest
+
+          docker push $REST_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker push $REST_TAG_FULLNAME:latest
 
   deploy-gh:
     needs: build
     name: Deploy to GH Packages
-    runs-on: ubuntu-latest
-    environment: 
-      name: Development
+    runs-on: ubuntu-latest    
     steps:
-      - name: Set Envs
-        run: |
-          echo "GRAPH_IMAGE=$(echo ghcr.io/${{ github.repository }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "GRAPH_IMAGE_LATEST=$(echo ghcr.io/${{ github.repository }}/$GRAPHQL_IMAGE_NAME:latest)" >> $GITHUB_ENV
-          
-          echo "REST_IMAGE=$(echo ghcr.io/${{ github.repository }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "REST_IMAGE_LATEST=$(echo ghcr.io/${{ github.repository }}/$REST_IMAGE_NAME:latest)" >> $GITHUB_ENV
-
       - name: Download artifact
         uses: actions/download-artifact@v3.0.2
         with:
@@ -139,9 +124,18 @@ jobs:
 
       - name: Load and Push Docker image
         run: |
+          GRAPH_TAG_FULLNAME=ghcr.io/${{ github.actor }}/$GRAPHQL_IMAGE_NAME
+          REST_TAG_FULLNAME=ghcr.io/${{ github.actor }}/$REST_IMAGE_NAME
+
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-          docker push $GRAPH_IMAGE          
-          docker push $REST_IMAGE
-          docker push $GRAPH_IMAGE_LATEST
-          docker push $REST_IMAGE_LATEST
+
+          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:latest
+          docker push $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker push $GRAPH_TAG_FULLNAME:latest
+
+          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:latest
+          docker push $REST_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker push $REST_TAG_FULLNAME:latest
