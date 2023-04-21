@@ -129,8 +129,8 @@ jobs:
 
       - name: Load and Push Docker image
         run: |
-          GRAPH_TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.GRAPHQL_IMAGE_NAME }}
-          REST_TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.REST_IMAGE_NAME }}
+          GRAPH_TAG_FULLNAME=ghcr.io/${{ github.repository }}/${{ env.GRAPHQL_IMAGE_NAME }}
+          REST_TAG_FULLNAME=ghcr.io/${{ github.repository }}/${{ env.REST_IMAGE_NAME }}
 
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
