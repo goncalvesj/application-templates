@@ -37,9 +37,19 @@ jobs:
       run: |
         docker buildx build \
         -f $APP_CONTEXT/NetCore.Angular.AzureB2C/Dockerfile \
-        --output type=docker,dest=${{ env.IMAGE_NAME }}.tar $APP_CONTEXT
+        --output type=docker,dest=${{ env.IMAGE_NAME }}.tar -t ${{ env.IMAGE_NAME }}:build \
+        $APP_CONTEXT
+
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Load Image and Tag
       run: |
         docker load --input ${{ env.IMAGE_NAME }}.tar
+        docker tag ${{ env.IMAGE_NAME }}:build ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
         docker images
+        docker push ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:latest
