@@ -35,5 +35,4 @@ jobs:
       
     - name: Build the Docker image
       run: |        
-        # docker build . --file Dockerfile --tag $IMAGE_NAME:$GITHUB_RUN_ID
         docker buildx build $APP_CONTEXT -f $APP_CONTEXT/NetCore-Angular-AzureB2C/Dockerfile --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar
