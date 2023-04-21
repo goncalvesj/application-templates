@@ -51,5 +51,6 @@ jobs:
       run: |
         TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}
         docker load --input ${{ env.IMAGE_NAME }}.tar
-        docker tag ${{ env.IMAGE_NAME }}:build $TAG_FULLNAME:latest $TAG_FULLNAME:$GITHUB_RUN_ID
+        docker tag ${{ env.IMAGE_NAME }}:build $TAG_FULLNAME:latest
+        docker tag ${{ env.IMAGE_NAME }}:build $TAG_FULLNAME:$GITHUB_RUN_ID
         docker push $TAG_FULLNAME:latest $TAG_FULLNAME:$GITHUB_RUN_ID
