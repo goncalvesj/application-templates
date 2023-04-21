@@ -38,4 +38,8 @@ jobs:
         docker buildx build \
         -f $APP_CONTEXT/NetCore.Angular.AzureB2C/Dockerfile \
         --output type=docker,dest=${{ env.IMAGE_NAME }}.tar $APP_CONTEXT
+
+    - name: Load Image and Tag
+      run: |
+        docker load --input ${{ env.IMAGE_NAME }}.tar
         docker images
