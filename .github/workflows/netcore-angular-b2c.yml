@@ -11,12 +11,12 @@ on:
     branches:
       - master
     paths:
-      - 'NetCore-Angular-AzureB2C/*'
+      - 'NetCore-Angular-AzureB2C/**'
   pull_request:
     branches: 
       - master
     paths:
-      - 'NetCore-Angular-AzureB2C/*'
+      - 'NetCore-Angular-AzureB2C/**'
       - '.github/workflows/netcore-angular-b2c.yml'
 
 env:
