@@ -82,14 +82,6 @@ jobs:
         run: |
           az acr login -n ${{ secrets.AZURE_ACR_NAME }}
 
-      - name: Set Envs
-        run: |
-          echo "GRAPH_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "GRAPH_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME:latest)" >> $GITHUB_ENV
-          
-          echo "REST_IMAGE=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
-          echo "REST_IMAGE_LATEST=$(echo ${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME:latest)" >> $GITHUB_ENV
-
       - name: Download artifact
         uses: actions/download-artifact@v3.0.2
         with:
@@ -100,13 +92,17 @@ jobs:
         run: |
           GRAPH_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME
           REST_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME
-          
+
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-          
+
+          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:latest
           docker push $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
           docker push $GRAPH_TAG_FULLNAME:latest
 
+          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:$GITHUB_RUN_ID
+          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:latest
           docker push $REST_TAG_FULLNAME:$GITHUB_RUN_ID
           docker push $REST_TAG_FULLNAME:latest
 
@@ -127,6 +123,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.2.1
 
       - name: Load and Push Docker image
         run: |
