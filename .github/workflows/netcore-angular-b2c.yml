@@ -1,26 +1,57 @@
 name: NetCore-Angular-B2C-CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Reason'
+        required: true
+        default: 'Testing'
   push:
-    branches: [ master ]
+    branches:
+      - master
     paths:
-      - 'NetCore-Angular-AzureB2C/*'
+      - 'NetCore-Angular-AzureB2C/**'
   pull_request:
-    branches: [ master ]
+    branches: 
+      - master
     paths:
-      - 'NetCore-Angular-AzureB2C/*'
+      - 'NetCore-Angular-AzureB2C/**'
+      - '.github/workflows/netcore-angular-b2c.yml'
 
 env:
-  IMAGE_NAME: "goncalvesj/netcore-angular-b2c"
+  IMAGE_NAME: "netcore-angular-b2c"
+  APP_CONTEXT: './NetCore-Angular-AzureB2C'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
     
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2.2.1
+      
     - name: Build the Docker image
       run: |
-        cd NetCore-Angular-AzureB2C
-        docker build . --file Dockerfile --tag $IMAGE_NAME:$GITHUB_RUN_ID
+        docker buildx build \
+        -f $APP_CONTEXT/NetCore.Angular.AzureB2C/Dockerfile \
+        --output type=docker,dest=${{ env.IMAGE_NAME }}.tar -t ${{ env.IMAGE_NAME }}:build \
+        $APP_CONTEXT
+
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Load Image and Tag
+      run: |
+        TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}
+        docker load --input ${{ env.IMAGE_NAME }}.tar
+        docker tag ${{ env.IMAGE_NAME }}:build $TAG_FULLNAME:latest
+        docker tag ${{ env.IMAGE_NAME }}:build $TAG_FULLNAME:$GITHUB_RUN_ID
+        docker push $TAG_FULLNAME:latest
+        docker push $TAG_FULLNAME:$GITHUB_RUN_ID
