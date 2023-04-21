@@ -6,6 +6,13 @@ on:
     paths:
       - 'FederatedIdentity/FederatedIdentity.Web/**'
       - '.github/workflows/federated-identity.yml'
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - 'FederatedIdentity/FederatedIdentity.Web/**'
+      - '.github/workflows/federated-identity.yml'
+      
 env:
   IMAGE_NAME: "federated-identity"
 
