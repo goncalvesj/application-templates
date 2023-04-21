@@ -1,6 +1,12 @@
 name: NetCore-Angular-B2C-CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Reason'
+        required: true
+        default: 'Testing'
   push:
     branches: [ master ]
     paths:
