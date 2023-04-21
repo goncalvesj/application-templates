@@ -67,9 +67,9 @@ jobs:
             ./*.tgz
           if-no-files-found: error
 
-  deploy:
+  deploy-dev:
     needs: build
-    name: Deploy to Dev
+    name: Deploy to Azure Container Registry
     runs-on: ubuntu-latest
     environment: 
       name: Development
@@ -104,6 +104,43 @@ jobs:
           docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
           docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
           docker image ls
+          docker push $GRAPH_IMAGE          
+          docker push $REST_IMAGE
+          docker push $GRAPH_IMAGE_LATEST
+          docker push $REST_IMAGE_LATEST
+
+  deploy-gh:
+    needs: build
+    name: Deploy to GH Packages
+    runs-on: ubuntu-latest
+    environment: 
+      name: Development
+    steps:
+      - name: Set Envs
+        run: |
+          echo "GRAPH_IMAGE=$(echo ghcr.io/${{ github.repository }}/$GRAPHQL_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "GRAPH_IMAGE_LATEST=$(echo ghcr.io/${{ github.repository }}/$GRAPHQL_IMAGE_NAME:latest)" >> $GITHUB_ENV
+          
+          echo "REST_IMAGE=$(echo ghcr.io/${{ github.repository }}/$REST_IMAGE_NAME:$GITHUB_RUN_ID)" >> $GITHUB_ENV
+          echo "REST_IMAGE_LATEST=$(echo ghcr.io/${{ github.repository }}/$REST_IMAGE_NAME:latest)" >> $GITHUB_ENV
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: output-artifacts
+          path: /tmp
+
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Load and Push Docker image
+        run: |
+          docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
+          docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
           docker push $GRAPH_IMAGE          
           docker push $REST_IMAGE
           docker push $GRAPH_IMAGE_LATEST
