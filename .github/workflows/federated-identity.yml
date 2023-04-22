@@ -4,13 +4,13 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'FederatedIdentity/FederatedIdentity.Web/**'
+      - 'Federated-Identity/**'
       - '.github/workflows/federated-identity.yml'
   pull_request:
     branches: 
       - master
     paths:
-      - 'Federated-Identity/FederatedIdentity.Web/**'
+      - 'Federated-Identity/**'
       - '.github/workflows/federated-identity.yml'
 
 env:
