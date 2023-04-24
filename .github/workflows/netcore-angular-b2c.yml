@@ -1,4 +1,4 @@
-name: NetCore-Angular-B2C-CI
+name: CI/CD - NetCore Angular B2C
 
 on:
   workflow_dispatch:
@@ -12,12 +12,12 @@ on:
       - master
     paths:
       - 'NetCore-Angular-AzureB2C/**'
-  pull_request:
-    branches: 
-      - master
-    paths:
-      - 'NetCore-Angular-AzureB2C/**'
-      - '.github/workflows/netcore-angular-b2c.yml'
+  # pull_request:
+  #   branches: 
+  #     - master
+  #   paths:
+  #     - 'NetCore-Angular-AzureB2C/**'
+  #     - '.github/workflows/netcore-angular-b2c.yml'
 
 env:
   IMAGE_NAME: "netcore-angular-b2c"

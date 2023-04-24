@@ -1,4 +1,4 @@
-name: Federated Identity CI/CD
+name: CI/CD - Federated Identity
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
     paths:
       - 'Federated-Identity/**'
       - '.github/workflows/federated-identity.yml'
-  pull_request:
-    branches: 
-      - master
-    paths:
-      - 'Federated-Identity/**'
-      - '.github/workflows/federated-identity.yml'
+  # pull_request:
+  #   branches: 
+  #     - master
+  #   paths:
+  #     - 'Federated-Identity/**'
+  #     - '.github/workflows/federated-identity.yml'
 
 env:
   IMAGE_NAME: "federated-identity"
