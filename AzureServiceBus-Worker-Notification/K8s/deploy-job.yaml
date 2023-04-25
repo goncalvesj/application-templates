@@ -1,0 +1,65 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: net-servicebus-singlejob-scaler
+  namespace: keda-dotnet-sample
+spec:
+  pollingInterval: 30
+  maxReplicaCount: 50
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTargetRef:
+    parallelism: 1
+    completions: 1
+    activeDeadlineSeconds: 2400  # set to expected max runtime + some buffer
+    backoffLimit: 2
+    template:
+      metadata:
+        # annotations:
+        #   "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+        labels:
+          app: single-consumer-job
+      spec:
+        tolerations:
+          - key: "kubernetes.azure.com/scalesetpriority"
+            operator: "Equal"
+            value: "spot"
+            effect: "NoSchedule"
+        nodeSelector:
+          workload: jobs
+        containers:
+        - name: single-consumer-job
+          image: jprgacr.azurecr.io/net-servicebus-singlejob:dev
+          imagePullPolicy: Always
+          # resources:
+          #   requests:
+          #     cpu: 100m
+          #     memory: 2000Mi # intentionally set high in order to trigger cluster autoscaler
+          #   limits:
+          #     cpu: 100m
+          #     memory: 2000Mi
+          env:              
+          - name: SERVICEBUS_QUEUE_NAME
+            value: input-queue
+          - name: PROCESSING_TIME_SECONDS
+            value: "30"
+          - name: CONFIG_FILES_PATH
+            value: /mnt/secrets
+          volumeMounts:
+          - name: secrets-store
+            mountPath: "/mnt/secrets"
+            readOnly: true
+        volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: lz1-keyvault
+  triggers:
+  - type: azure-servicebus
+    metadata:
+      queueName: input-queue
+      messageCount: '1'
+    authenticationRef:
+      name: trigger-auth-service-bus

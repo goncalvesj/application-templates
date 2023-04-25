@@ -1,13 +1,20 @@
-name: Federated Identity CI/CD
+name: CI/CD - Federated Identity
 
 on:
   push:
     branches: [ master ]
     paths:
-      - 'FederatedIdentity/FederatedIdentity.Web/*'
+      - 'Federated-Identity/**'
       - '.github/workflows/federated-identity.yml'
+  # pull_request:
+  #   branches: 
+  #     - master
+  #   paths:
+  #     - 'Federated-Identity/**'
+  #     - '.github/workflows/federated-identity.yml'
+
 env:
-  IMAGE_NAME: "goncalvesj/federated-identity"
+  IMAGE_NAME: "federated-identity"
 
 jobs:
   build:
@@ -21,11 +28,15 @@ jobs:
       
     - name: Build the Docker image
       run: | 
-       cd FederatedIdentity/FederatedIdentity.Web
-       docker build . --file Dockerfile --tag $IMAGE_NAME:${{ steps.date.outputs.date }}
+       cd Federated-Identity/FederatedIdentity.Web
+       docker build . --file Dockerfile --tag ghcr.io/${{ github.actor }}/$IMAGE_NAME:latest
       
-    - name: Docker Login
-      run: echo '${{ secrets.DOCKERHUB_PASSWORD }}' | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Docker Push
-      run: docker push $IMAGE_NAME:${{ steps.date.outputs.date }}
+      run: docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:latest

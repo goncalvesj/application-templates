@@ -264,3 +264,6 @@ __pycache__/
 /NetCore-Angular-AzureB2C/.config
 .vscode
 *.pubxml
+/NetCore-WinService/docker-compose.override.yml
+/AzureServiceBus-Worker-Notification/docker-compose.override.yml
+/AzureServiceBus-Worker-Notification/Net.ServiceBus.Client/.env
