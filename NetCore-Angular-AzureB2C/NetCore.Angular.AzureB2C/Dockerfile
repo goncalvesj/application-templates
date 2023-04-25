@@ -18,16 +18,13 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get install -y nodejs
 
 WORKDIR /src
-COPY [".", "NetCore-Angular-AzureB2C/"]
-RUN dotnet restore "NetCore-Angular-AzureB2C/NetCore-Angular-AzureB2C.csproj"
-COPY . .
-WORKDIR "/src/NetCore-Angular-AzureB2C"
-RUN dotnet build "NetCore-Angular-AzureB2C.csproj" -c Release -o /app/build
+COPY [".", "."]
+RUN dotnet build "NetCore.Angular.AzureB2C/NetCore.Angular.AzureB2C.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NetCore-Angular-AzureB2C.csproj" -c Release -o /app/publish
+RUN dotnet publish "NetCore.Angular.AzureB2C/NetCore.Angular.AzureB2C.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NetCore-Angular-AzureB2C.dll"]
+ENTRYPOINT ["dotnet", "NetCore.Angular.AzureB2C.dll"]

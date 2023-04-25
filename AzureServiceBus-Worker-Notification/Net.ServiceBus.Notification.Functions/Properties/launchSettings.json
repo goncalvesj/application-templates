@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Net.ServiceBus.Notification.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7244"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 30681,
+      "useSSL": false
+    }
+  }
+}

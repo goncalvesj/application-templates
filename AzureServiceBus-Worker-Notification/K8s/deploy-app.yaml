@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netcore-servicebus-worker
+  labels:
+    app: netcore-servicebus-worker
+    namespace: keda-dotnet-sample
+spec:
+  selector:
+    matchLabels:
+      app: netcore-servicebus-worker
+  template:
+    metadata:
+      labels:
+        app: netcore-servicebus-worker
+    spec:
+      containers:
+      - name: netcore-servicebus-worker
+        image: jprgacr.azurecr.io/netcore-servicebus-worker:dev
+        imagePullPolicy: Always
+        env:
+        # - name: KEDA_SERVICEBUS_AUTH_MODE
+        #   value: ConnectionString
+        # - name: KEDA_SERVICEBUS_QUEUE_CONNECTIONSTRING
+        #   valueFrom:
+        #     secretKeyRef:
+        #      name: secrets-order-consumer-v2
+        #      key: servicebus_connectionstring
+        - name: SERVICEBUS_QUEUE_NAME
+          value: input-queue
+        - name: PROCESSING_TIME_SECONDS
+          value: "600"
+        - name: CONFIG_FILES_PATH
+          value: /mnt/secrets
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets"
+          readOnly: true
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: lz1-keyvault
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
+      nodeSelector:
+        workload: jobs

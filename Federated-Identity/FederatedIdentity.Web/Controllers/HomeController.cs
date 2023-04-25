@@ -59,7 +59,6 @@ namespace FederatedIdentity.Web.Controllers
             var link = BuildUrl(token);
 
             //var Body = string.Empty;
-
             //var htmlTemplate =
             //    System.IO.File.ReadAllText(Path.Combine(_hostingEnvironment.ContentRootPath,
             //        "App_Data\\Template.html"));

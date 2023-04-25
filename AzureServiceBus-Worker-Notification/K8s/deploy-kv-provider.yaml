@@ -1,0 +1,26 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: lz1-keyvault
+  namespace: keda-dotnet-sample
+spec:
+  provider: azure
+  parameters:
+    keyvaultName: "lz1keyvault"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: "CHANGE_ME"
+    objects:  |
+      array:
+        - |
+          objectName: WorkerConnectionString
+          objectAlias: SERVICEBUS_QUEUE_CONNECTIONSTRING
+          objectType: secret        
+        - |
+          objectName: StorageConnectionString
+          objectAlias: STORAGE_CONNECTIONSTRING
+          objectType: secret
+        - |
+          objectName: InsightsInstrumentationKey
+          objectAlias: APPLICATIONINSIGHTS_CONNECTION_STRING
+          objectType: secret        
+    tenantId: "CHANGE_ME"
