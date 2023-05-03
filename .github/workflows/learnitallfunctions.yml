@@ -5,7 +5,7 @@ on:
     - features/es-spa
 env:
   AZURE_FUNCTIONAPP_NAME: learnitallfunctions
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: EventSourcing.Functions\.
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: Event-Sourcing\EventSourcing.Functions
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: Event-Sourcing\EventSourcing.Functions
