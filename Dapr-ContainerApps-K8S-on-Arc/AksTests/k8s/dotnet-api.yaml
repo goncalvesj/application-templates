@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-api
+spec:
+  selector:
+    matchLabels:
+      app: dotnet-api
+  template:
+    metadata:
+      labels:
+        app: dotnet-api
+    spec:      
+      containers:
+        - name: dotnet-api
+          image: jprgacr.azurecr.io/dotnet-api:dev
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+          env:
+            - name: NODEAPI_URL
+              value: "http://node-api:8082"
+            - name: PYAPI_URL
+              value: "http://python-api:8081"
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5217
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 8080 
+          #   initialDelaySeconds: 15 
+          #   periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnet-api
+spec:
+  selector:
+    app: dotnet-api
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 5217
