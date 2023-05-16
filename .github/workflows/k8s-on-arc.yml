@@ -70,12 +70,14 @@ jobs:
   deploy-python-gcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
     needs: build-python
-    name: package python api
+    name: package python api        
     with:
       image-tag: k8s-arc-python-api
       build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
       dockerfile-location: python-api/Dockerfile
     secrets: inherit
+    permissions:
+      packages: write
 
     #   deploy-dotnet:
 #     uses: ./.github/workflows/aks-tests-deploy-reusable.yml
