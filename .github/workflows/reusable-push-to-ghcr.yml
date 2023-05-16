@@ -30,7 +30,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          cd ${{ inputs.build-context }}}
+          cd ${{ inputs.build-context }}
           docker build -f ${{ inputs.dockerfile-location }} -t ${{ inputs.image-tag }}:$GITHUB_RUN_ID -t ${{ inputs.image-tag }}:latest .   
 
       - name: Push the Docker image
