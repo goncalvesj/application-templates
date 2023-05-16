@@ -33,9 +33,10 @@ Go to the container app console and run:
 
 ```bash
 # Install curl if needed
-apt update && apt install -y curl
+apt update && apt install -y curl dnsutils
 apt update && apt install -y curl && curl http://localhost/app2/hello
 apt update && apt install -y curl && curl http://localhost/app1/hello
+hostname -I
 # Replace localhost with the FQDN of the other container
 curl http://localhost/app2/hello
 curl https://dapr-2.redsmoke-ba3ce026.northeurope.azurecontainerapps.io/app2/hello
