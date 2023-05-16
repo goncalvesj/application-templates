@@ -31,9 +31,11 @@ jobs:
       - name: Build the Docker image
         run: |
           cd ${{ inputs.build-context }}
-          docker build -f ${{ inputs.dockerfile-location }} -t ${{ inputs.image-tag }}:$GITHUB_RUN_ID -t ${{ inputs.image-tag }}:latest .   
+          docker build -f ${{ inputs.dockerfile-location }} \
+          -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:$GITHUB_RUN_ID \
+          -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:latest .   
 
       - name: Push the Docker image
         run: |          
-          docker push ${{ inputs.image-tag }}:$GITHUB_RUN_ID
-          docker push ${{ inputs.image-tag }}:latest
+          docker push ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:$GITHUB_RUN_ID
+          docker push ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:latest
