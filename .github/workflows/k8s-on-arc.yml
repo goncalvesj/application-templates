@@ -1,0 +1,84 @@
+name: CI/CD - K8S On Azure Arc
+
+on:
+  push:
+    branches: ['dapr-aca-k8s-arc-apps']
+    # paths:
+    #   - 'Azure-K8S-On-Arc/**'
+    #   - '.github/**'
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario'
+        required: false
+        type: boolean
+
+env:  
+  APP_CONTEXT: 'Azure-K8S-On-Arc'
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+#   build-node:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Use Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 14.x
+#       - name: Build
+#         run: |
+#           cd AksTests/node-api
+#           npm install
+#           npm run build
+  build-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/python-api
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+#   build-dotnet:
+#     name: build dotnet api
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Build
+#         run: |
+#           cd AksTests/dotnet-api
+#           dotnet restore
+#           dotnet build
+  
+#   deploy-node:
+#     uses: ./.github/workflows/aks-tests-deploy-reusable.yml
+#     needs: build-node
+#     name: package node api
+#     with:
+#       image-tag: akstests/node-api
+#       dockerfile-location: node-api/Dockerfile
+#     secrets: inherit
+  deploy-python-gcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-python
+    name: package python api
+    with:
+      image-tag: k8s-arc-python-api
+      build-context: ${{ env.APP_CONTEXT }}
+      dockerfile-location: python-api/Dockerfile
+    secrets: inherit
+#   deploy-dotnet:
+#     uses: ./.github/workflows/aks-tests-deploy-reusable.yml
+#     needs: build-dotnet
+#     name: package dotnet api
+#     with:
+#       image-tag: akstests/dotnet-api
+#       dockerfile-location: dotnet-api/Dockerfile
+#     secrets: inherit

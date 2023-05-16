@@ -1,0 +1,39 @@
+name: Reusable - Push to GitHub Container Registry
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+      build-context:
+        required: true
+        type: string
+      dockerfile-location:
+        required: true
+        type: string
+
+jobs:
+  push-to-ghcr:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v3      
+
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          cd ${{ inputs.build-context }}}
+          docker build -f ${{ inputs.dockerfile-location }} -t ${{ inputs.image-tag }}:$GITHUB_RUN_ID -t ${{ inputs.image-tag }}:latest .   
+
+      - name: Push the Docker image
+        run: |          
+          docker push ${{ inputs.image-tag }}:$GITHUB_RUN_ID
+          docker push ${{ inputs.image-tag }}:latest
