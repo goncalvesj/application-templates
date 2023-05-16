@@ -6,6 +6,8 @@ on:
     # paths:
     #   - 'Azure-K8S-On-Arc/**'
     #   - '.github/**'
+  pull_request:
+    branches: ['dapr-aca-k8s-arc-apps']    
   workflow_dispatch:
     inputs:
       tags:
