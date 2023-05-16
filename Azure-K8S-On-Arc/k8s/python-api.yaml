@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: python-api
+  namespace: web-apps
 spec:
   selector:
     matchLabels:
@@ -13,7 +14,7 @@ spec:
     spec:      
       containers:
         - name: python-api
-          image: jprgacr.azurecr.io/python-api:dev
+          image: ghcr.io/goncalvesj/k8s-arc-python-api:latest
           resources:
             limits:
               memory: '128Mi'
@@ -48,6 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: python-api
+  namespace: web-apps
 spec:
   selector:
     app: python-api
