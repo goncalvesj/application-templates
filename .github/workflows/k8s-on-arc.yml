@@ -18,20 +18,20 @@ permissions:
   contents: read
 
 jobs:
-  #   build-node:
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #       - name: Checkout code
-  #         uses: actions/checkout@v3
-  #       - name: Use Node.js
-  #         uses: actions/setup-node@v3
-  #         with:
-  #           node-version: 14.x
-  #       - name: Build
-  #         run: |
-  #           cd AksTests/node-api
-  #           npm install
-  #           npm run build
+    build-node:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        - name: Use Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 14.x
+        - name: Build
+          run: |
+            cd ${{ env.APP_CONTEXT }}/node-api
+            npm install
+            npm run build
 
   build-python:
     runs-on: ubuntu-latest
@@ -58,16 +58,19 @@ jobs:
   #           dotnet restore
   #           dotnet build
 
-  #   deploy-node:
-  #     uses: ./.github/workflows/aks-tests-deploy-reusable.yml
-  #     needs: build-node
-  #     name: package node api
-  #     with:
-  #       image-tag: akstests/node-api
-  #       dockerfile-location: node-api/Dockerfile
-  #     secrets: inherit
+    deploy-node-ghcr:
+      uses: ./.github/workflows/reusable-push-to-ghcr.yml
+      needs: build-node
+      name: package node api
+      with:
+        image-tag: k8s-arc-node-api
+        build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
+        dockerfile-location: node-api/Dockerfile
+      secrets: inherit
+      permissions:
+        packages: write
 
-  deploy-python-gcr:
+  deploy-python-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
     needs: build-python
     name: package python api        
