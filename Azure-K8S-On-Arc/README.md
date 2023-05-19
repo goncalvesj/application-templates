@@ -8,6 +8,8 @@ Supporting links:
 - <https://www.linkedin.com/pulse/multi-cloud-experiment-azure-arc-kubernetes-raspberry-brian-amedro/>
 - <https://ubuntu.com/kubernetes/install>
 
+An Azure VM can also be used, after the VM is created follow from step 4.
+
 1. Download Ubuntu Server from <https://ubuntu.com/download/server>.
 2. Create a VM in Hyper-V with the downloaded ISO.
    1. Disable Secure Boot.
@@ -22,6 +24,9 @@ Supporting links:
    1. `microk8s enable dns metrics-server hostpath-storage`
 
 ## Kubernetes on Docker Desktop
+
+If using Kubernetes on Docker Desktop, MicroK8S is not necessary.
+Just follow the steps to integrate it with Azure Arc.
 
 ## Install Redis with Helm
 
@@ -65,7 +70,6 @@ To connect to your database from outside the cluster execute the following comma
 `KEYS *`
 `GET key`
 `FLUSHDB`
-
 
 ## Integrating with Azure Arc
 
