@@ -46,17 +46,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-  #   build-dotnet:
-  #     name: build dotnet api
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #       - name: Checkout code
-  #         uses: actions/checkout@v3
-  #       - name: Build
-  #         run: |
-  #           cd AksTests/dotnet-api
-  #           dotnet restore
-  #           dotnet build
+  build-dotnet:
+    name: build dotnet api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/dotnet-api
+          dotnet restore
+          dotnet build
 
   deploy-node-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
@@ -82,11 +82,14 @@ jobs:
     permissions:
       packages: write
 
-    #   deploy-dotnet:
-#     uses: ./.github/workflows/aks-tests-deploy-reusable.yml
-#     needs: build-dotnet
-#     name: package dotnet api
-#     with:
-#       image-tag: akstests/dotnet-api
-#       dockerfile-location: dotnet-api/Dockerfile
-#     secrets: inherit
+  deploy-dotnet:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-dotnet
+    name: package dotnet api
+    with:
+      image-tag: k8s-arc-dotnet-api
+      build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
+      dockerfile-location: dotnet-api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
