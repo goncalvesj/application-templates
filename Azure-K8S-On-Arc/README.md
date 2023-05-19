@@ -84,17 +84,19 @@ To connect to your database from outside the cluster execute the following comma
 ## Integrate with Flux for GitOps
 
 1. In the Azure Portal, go to the Resource Group and select the Kubernetes Cluster. Under Settings, select GitOps. Select the GitOps provider and follow the instructions to connect to the Git repository.
+2. Afterwards you should see your apps deployed in the cluster.
 
 ## Integrate with Azure API Management Self-hosted Gateway
 
 1. Create an API Management instance.
 2. In the Azure Portal, go to the API Management instance and select Self-hosted gateways. Select Add gateway and follow the instructions to create the gateway.
 3. Go to the Arc Enabled Kubernetes Cluster. Under Extensions, select Add. Select API Management Gateway and follow the instructions to install the gateway in the cluster.
+4. Afterward you should see the gateway installed in the cluster.
 
 ## Things to Add
 
-Redis - Done
-Kafka
-Config Cat / Azure App Config
-App Insights
-Linkerd
+`Redis - Done`
+`Kafka`
+`Config Cat / Azure App Config`
+`App Insights`
+`Linkerd`

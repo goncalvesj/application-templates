@@ -1,6 +1,6 @@
-# Dapr Tests
+# Dapr Enabled Apps on Azure Container Apps
 
-Information about the Dapr tests.
+This repository contains a sample application that uses Dapr and Azure Container Apps.
 
 ## Infrastructure Repository
 
@@ -32,7 +32,8 @@ Open the `tests.http` file in VS Code and try the requests.
 Go to the container app console and run:
 
 ```bash
-# Install curl if needed
+# Install curl if needed for troubleshooting
+# Go to the container app console and run:
 apt update && apt install -y curl dnsutils
 apt update && apt install -y curl && curl http://localhost/app2/hello
 apt update && apt install -y curl && curl http://localhost/app1/hello
@@ -47,7 +48,7 @@ curl http://localhost/app1/hello
 curl -X POST http://localhost/app1/order
 curl http://localhost:3500/v1.0/healthz
 curl http://localhost:3500/v1.0/metadata
-## Deploying a Linux container
+
+## Deploying a Linux container for testing
 az container create -g JPRG-ALZ-LZ2 --name testdns --image ubuntu --command-line "tail -f /dev/null" --subnet  ACI-Subnet --vnet lz2spokevnet
-...
 ```
