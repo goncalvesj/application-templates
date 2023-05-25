@@ -36,7 +36,7 @@ jobs:
     name: package dapr sender api
     with:
       image-tag: aca-dapr-sender-api
-      build-context: Azure-ContainerApps- #Doesnt accept global env variables as input
+      build-context: Azure-ContainerApps-Dapr #Doesnt accept global env variables as input
       dockerfile-location: Dapr.Api1/Dockerfile
     secrets: inherit
     permissions:
