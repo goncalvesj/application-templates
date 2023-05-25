@@ -15,23 +15,28 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+app.UseSwagger();
+app.UseSwaggerUI();
+// }
+
 
 app.UseHttpsRedirection();
 
-app.MapGet("app1/hello", () => {
+app.MapGet("app1/hello", () =>
+{
     return "Hello From App 1!";
 })
 .WithOpenApi();
 
-app.MapPost("app1/order", async () => {
+app.MapPost("app1/order", async () =>
+{
 
     var client = new DaprClientBuilder().Build();
 
-    for (int i = 1; i <= 20; i++) {
+    for (int i = 1; i <= 20; i++)
+    {
 
         var order = new Order(i);
 
@@ -46,7 +51,8 @@ app.MapPost("app1/order", async () => {
 })
 .WithOpenApi();
 
-app.MapPost("app1/publish", async () => {
+app.MapPost("app1/publish", async () =>
+{
 
     var baseURL = (Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost") + ":" + (Environment.GetEnvironmentVariable("DAPR_HTTP_PORT") ?? "3500"); //reconfigure cpde to make requests to Dapr sidecar
     const string PUBSUBNAME = "pubsub";
@@ -56,7 +62,8 @@ app.MapPost("app1/publish", async () => {
     var httpClient = new HttpClient();
     httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10; i++)
+    {
         var order = new Order(i);
         var orderJson = JsonSerializer.Serialize<Order>(order);
         var content = new StringContent(orderJson, Encoding.UTF8, "application/json");
@@ -72,11 +79,13 @@ app.MapPost("app1/publish", async () => {
 })
 .WithOpenApi();
 
-app.MapPost("app1/publishsdk", async () => {
+app.MapPost("app1/publishsdk", async () =>
+{
 
     using var client = new DaprClientBuilder().Build();
 
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10; i++)
+    {
         var order = new Order(i);
 
         // Publish an event/message using Dapr PubSub

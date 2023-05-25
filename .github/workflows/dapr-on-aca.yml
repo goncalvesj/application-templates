@@ -1,0 +1,53 @@
+name: CI/CD - Dapr On Azure Container Apps
+
+on:
+  push:
+    branches: ['features/dapr-aca-k8s-arc-apps']
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario'
+        required: false
+        type: boolean
+
+env:
+  APP_CONTEXT: 'Azure-ContainerApps-Dapr'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-dotnet:
+    name: build dapr sender api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/Dapr.Api1
+          dotnet restore
+          dotnet build
+
+  deploy-daprsender-api-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-dotnet    
+    name: package dapr sender api
+    with:
+      image-tag: aca-dapr-sender-api
+      build-context: Azure-ContainerApps- #Doesnt accept global env variables as input
+      dockerfile-location: Dapr.Api1/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+
+  deploy-daprsender-api-aca:
+    uses: ./.github/workflows/reusable-deploy-to-aca.yml
+    needs: deploy-daprsender-api-ghcr
+    name: package dapr sender api
+    with:
+      image-tag: aca-dapr-sender-api
+      aca-name: dapr-app-1
+      resource-group: JPRG-ALZ-LZ2
+    secrets: inherit
