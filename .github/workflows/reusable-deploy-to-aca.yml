@@ -14,7 +14,7 @@ on:
         type: string
 
 jobs:
-  push-to-acr:
+  deploy-to-aca:
     environment: 
       name: Development
     runs-on: ubuntu-latest
