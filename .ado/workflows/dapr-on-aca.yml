@@ -4,7 +4,12 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 trigger:
-- features/dapr-aca-k8s-arc-apps
+  branches:
+    include:
+    - features/dapr-aca-k8s-arc-apps    
+  paths:
+    include:
+    - Azure-ContainerApps-Dapr
 
 pool:
   vmImage: 'windows-latest'
