@@ -14,6 +14,7 @@ env:
   APP_CONTEXT: 'Azure-ContainerApps-Dapr'
 
 permissions:
+  security-events: write
   id-token: write
   contents: read
 
@@ -24,11 +25,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp
+
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/Dapr.Api1
           dotnet restore
           dotnet build
+      
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
 
   deploy-daprsender-api-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
