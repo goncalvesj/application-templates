@@ -2,7 +2,8 @@ name: PR - Dapr On Azure Container Apps
 
 on:
   pull_request:
-    branches: ['features/dapr-aca-k8s-arc-apps']
+    branches:
+      - master
     paths:
       - 'Azure-ContainerApps-Dapr/**'
 
