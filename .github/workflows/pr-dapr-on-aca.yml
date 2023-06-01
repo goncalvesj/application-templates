@@ -1,0 +1,43 @@
+name: PR - Dapr On Azure Container Apps
+
+on:
+  pull_request:
+    branches: ['features/dapr-aca-k8s-arc-apps']
+    paths:
+      - 'Azure-ContainerApps-Dapr/**'
+
+env:
+  APP_CONTEXT: 'Azure-ContainerApps-Dapr'
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build-dotnet:
+    name: build dapr apis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp
+
+      - name: Build Dapr Sender API
+        run: |
+          cd ${{ env.APP_CONTEXT }}/Dapr.Api1
+          dotnet restore
+          dotnet build
+      
+      - name: Build Dapr Consumer API
+        run: |
+          cd ${{ env.APP_CONTEXT }}/Dapr.Api2
+          dotnet restore
+          dotnet build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
