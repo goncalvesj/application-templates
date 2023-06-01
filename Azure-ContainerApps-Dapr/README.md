@@ -4,7 +4,7 @@ This repository contains a sample application that uses Dapr and Azure Container
 
 ## Infrastructure Repository
 
-Link to the infrastructure repository: <http://someurl>
+Link to the infrastructure repository: <http://someurll>
 
 ## Build
 
