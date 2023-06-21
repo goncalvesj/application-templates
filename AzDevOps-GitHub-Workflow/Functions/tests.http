@@ -1,0 +1,7 @@
+### Azure Functions
+POST http://localhost:7071/api/createissuefromtask
+Content-Type: application/json
+
+{
+    "orderId": 1
+}
