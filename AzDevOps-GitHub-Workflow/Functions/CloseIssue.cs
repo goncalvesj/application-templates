@@ -28,7 +28,7 @@ public class CloseIssue
         {
             var content = await req.ReadFromJsonAsync<GitHubRoot>();
 
-            if (content != null)
+            if (content != null && content.Issue.State == "closed")
             {
                 var issue = content.Issue.Body;
 
