@@ -5,3 +5,41 @@ Content-Type: application/json
 {
     "orderId": 1
 }
+
+### Close Task
+POST http://localhost:7288/api/closetaskfromissue
+Content-Type: application/json
+
+{
+  "action": "edited",
+  "issue": {
+    "url": "https://api.github.com/repos/username/repo/issues/165",
+    "repository_url": "https://api.github.com/repos/username/repo",
+    "labels_url": "https://api.github.com/repos/username/repo/issues/165/labels{/name}",
+    "comments_url": "https://api.github.com/repos/username/repo/issues/165/comments",
+    "events_url": "https://api.github.com/repos/username/repo/issues/165/events",
+    "html_url": "https://github.com/username/repo/issues/165",
+    "id": 1770027539,
+    "node_id": "I_kwDOCG6VDs5pgHoT",
+    "number": 165,
+    "title": "Create App for ADO to GH Sync",   
+    "state": "open",
+    "locked": false,   
+    "milestone": null,
+    "comments": 1,
+    "created_at": "2023-06-22T16:22:17Z",
+    "updated_at": "2023-06-24T11:54:27Z",
+    "closed_at": null,
+    "author_association": "OWNER",
+    "active_lock_reason": null,
+    "body": "Azure Boards WorkItem: [AB#39](https://dev.azure.com/username/f1972e87-579a-4de0-a848-a35e892d9d19/_workitems/edit/48)\r\n\r\nExtra stuff.",
+    "reactions": {
+      "url": "https://api.github.com/repos/username/repo/issues/165/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+    }
+}

@@ -1,17 +1,18 @@
-using System.Net;
+using AzDO.GH.Function.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using System.Net;
 
 namespace AzDO.GH.Function;
 
 public class CreateIssue
 {
     private readonly ILogger _logger;
-    private readonly GitHubClient _githubClient;
+    private readonly IGitHubClientService _githubClient;
 
-    public CreateIssue(ILoggerFactory loggerFactory, GitHubClient githubClient)
+    public CreateIssue(ILoggerFactory loggerFactory, IGitHubClientService githubClient)
     {
         _logger = loggerFactory.CreateLogger<CreateIssue>();
         _githubClient = githubClient;
@@ -24,13 +25,16 @@ public class CreateIssue
 
         try
         {
-            var content = await req.ReadFromJsonAsync<Root>();
+            var content = await req.ReadFromJsonAsync<AzDORoot>();
 
-            var systemTags = content?.resource?.fields?.SystemTags;
+            var systemTags = content?.Resource?.Fields?.SystemTags;
             if (string.IsNullOrEmpty(systemTags))
             {
+                var message = "SystemTags field not found";
+                _logger.LogInformation("Message: {message}", message);
+
                 var response = req.CreateResponse(HttpStatusCode.BadRequest);
-                await response.WriteAsJsonAsync(new { error = "SystemTags field not found" });
+                await response.WriteAsJsonAsync(new { error = message });
                 return response;
             }
 
@@ -40,17 +44,20 @@ public class CreateIssue
 
             if (string.IsNullOrEmpty(owner) || string.IsNullOrEmpty(repo))
             {
+                var message = "Invalid owner or repo tag";
+                _logger.LogInformation("Message: {message}", message);
+
                 var response = req.CreateResponse(HttpStatusCode.BadRequest);
-                await response.WriteAsJsonAsync(new { error = "Invalid owner or repo tag" });
+                await response.WriteAsJsonAsync(new { error = message });
                 return response;
             }
 
-            var newIssue = new NewIssue(content?.resource.fields.SystemTitle)
+            var newIssue = new NewIssue(content?.Resource.Fields.SystemTitle)
             {
-                Body = $"Azure Boards WorkItem: AB#{content?.resource.id}"
+                Body = $"Azure Boards WorkItem: AB#{content?.Resource.Id}"
             };
 
-            var issue = await _githubClient.Issue.Create(owner, repo, newIssue);
+            var issue = await _githubClient.CreateGitHubIssue(owner, repo, newIssue);
 
             var successResponse = req.CreateResponse(HttpStatusCode.OK);
             await successResponse.WriteAsJsonAsync(new
@@ -60,6 +67,7 @@ public class CreateIssue
                 issue.Title,
                 issue.HtmlUrl
             });
+            _logger.LogInformation("GH Issue created successfully");
             return successResponse;
         }
         catch (Exception ex)
