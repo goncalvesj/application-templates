@@ -48,7 +48,7 @@ public class CloseIssue
                 return successResponse;
             }
 
-            var message = "Issue not found";
+            var message = "Issue not found or status is not closed";
             _logger.LogInformation("Message: {message}", message);
 
             var response = req.CreateResponse(HttpStatusCode.BadRequest);
