@@ -1,0 +1,71 @@
+name: PR - ADO and GH Sync
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'AzureDevOps-GitHub-Workflow/**'
+
+env:
+  AZURE_FUNCTIONAPP_NAME: CHANGEME
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: AzureDevOps-GitHub-Workflow\Functions
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: AzureDevOps-GitHub-Workflow\Functions
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: csharp
+
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Publish
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+    
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: functionapp
+        path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+
+  # deploy:
+  #   runs-on: windows-latest
+  #   needs: build
+  #   if: github.ref == 'refs/heads/master'    
+  #   environment:
+  #     name: Development
+  #   steps:
+  #   - name: Download artifact from build job
+  #     uses: actions/download-artifact@v3
+  #     with:
+  #       name: functionapp
+  #       path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+  #   - name: Deploy to Azure Function App
+  #     uses: Azure/functions-action@v1
+  #     with:
+  #       app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+  #       publish-profile: ${{ secrets.CHANGEME }}
+  #       package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
