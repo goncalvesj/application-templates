@@ -34,7 +34,7 @@ public class CloseIssue
 
                 var pattern = @"\[(AB#)(\d+)\]";
 
-                var matches = Regex.Matches(issue, pattern);
+                var matches = Regex.Matches(issue, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
                 for (int i = 0; i < matches.Count; i++)
                 {
