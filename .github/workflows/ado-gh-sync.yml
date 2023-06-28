@@ -5,14 +5,14 @@ on:
     branches:
       - master
     paths:
-      - 'AzureDevOps-GitHub-Workflow/**'
+      - 'AzDevOps-GitHub-Workflow/**'
 
 env:
   AZURE_FUNCTIONAPP_NAME: CHANGEME
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: AzureDevOps-GitHub-Workflow\Functions
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: AzDevOps-GitHub-Workflow\Functions
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
-  WORKING_DIRECTORY: AzureDevOps-GitHub-Workflow\Functions
+  WORKING_DIRECTORY: AzDevOps-GitHub-Workflow\Functions
 
 permissions:
   security-events: write
