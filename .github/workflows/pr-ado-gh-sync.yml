@@ -30,7 +30,7 @@ jobs:
         languages: csharp
 
     - name: Build Azure Function
-      uses: ./.github/workflows/reusable-dotnet-build.yml   
+      uses: ./.github/workflows/reusable-dotnet-build.yml
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2

@@ -1,4 +1,4 @@
-name: PR - ADO and GH Sync
+name: CI/CD - ADO and GH Sync
 
 on:
   push:
