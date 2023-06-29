@@ -1,7 +1,7 @@
 name: PR - ADO and GH Sync
 
 on:
-  pull_request:
+  push:
     branches:
       - master
     paths:
