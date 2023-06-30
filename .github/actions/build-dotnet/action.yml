@@ -7,9 +7,16 @@ inputs:
    configuration:
      required: true
      description: ""
+   dotnet-version:
+     required: true
+     description: ""
 runs:
   using: "composite"
   steps:
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
     - name: Restore
       shell: bash
       run: dotnet restore "${{ inputs.working-directory }}"
