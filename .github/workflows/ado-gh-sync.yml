@@ -21,39 +21,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3    
+      - uses: actions/checkout@v3
 
-    #- name: Initialize CodeQL
-    #  uses: github/codeql-action/init@v2
-    #  with:
-    #    languages: csharp
+      - name: Build and Scan .Net Function App
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          configuration: ${{ env.CONFIGURATION }}
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
 
-    - name: Build Azure Function
-      uses: ./.github/actions/build-dotnet
-      with:
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        configuration: ${{ env.CONFIGURATION }}
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-
-    #- name: Perform CodeQL Analysis
-    #  uses: github/codeql-action/analyze@v2
-    
-    - name: List Files
-      run: |
-        cd AzDevOps-GitHub-Workflow
-        ls -aR
-        
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: functionapp
-        path: ${{ env.WORKING_DIRECTORY }}/output
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: functionapp
+          path: ${{ env.WORKING_DIRECTORY }}/output
 
   # deploy:
   #   runs-on: ubuntu-latest
-  #   needs: build    
+  #   needs: build
   #   environment:
-  #     name: AzDevOps-GitHub-Workflow    
+  #     name: AzDevOps-GitHub-Workflow
   #   steps:
   #   - name: Download artifact from build job
   #     uses: actions/download-artifact@v3
