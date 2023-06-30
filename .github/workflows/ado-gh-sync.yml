@@ -3,7 +3,7 @@ name: CI/CD - ADO and GH Sync
 on:
   push:
     branches:
-      - master
+      - goncalvesj-patch-1
     paths:
       - 'AzDevOps-GitHub-Workflow/**'
 
@@ -42,11 +42,15 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
     
+    - name: List Files
+      run: |
+        ls -a       
+        
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: functionapp
-        path: ${{ env.WORKING_DIRECTORY }}
+        path: ${{ env.WORKING_DIRECTORY }}\output
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,7 +62,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: functionapp
-        path: ${{ env.WORKING_DIRECTORY }}
+        path: ${{ env.WORKING_DIRECTORY }}\output
     - name: Deploy to Azure Function App
       uses: Azure/functions-action@v1
       with:
