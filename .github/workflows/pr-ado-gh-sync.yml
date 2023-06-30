@@ -5,7 +5,12 @@ on:
     branches:
       - master
     paths:
-      - 'AzDevOps-GitHub-Workflow/**'
+      - "AzDevOps-GitHub-Workflow/**"
+
+env:
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: AzDevOps-GitHub-Workflow/Functions
 
 permissions:
   security-events: write
@@ -16,23 +21,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
+      - uses: actions/checkout@v3
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: csharp
-
-    - name: Build Azure Function
-      uses: ./.github/actions/build-dotnet
-      with:
-        working-directory: AzDevOps-GitHub-Workflow\Functions
-        configuration: Release
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Build and Scan .Net Function App
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          configuration: ${{ env.CONFIGURATION }}
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
