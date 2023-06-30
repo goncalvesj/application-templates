@@ -30,7 +30,10 @@ jobs:
         languages: csharp
 
     - name: Build Azure Function
-      uses: ./.github/workflows/reusable-dotnet-build.yml
+      uses: ./.github/actions/build-dotnet
+      with:
+        working-directory: AzDevOps-GitHub-Workflow\Functions
+        configuration: Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
