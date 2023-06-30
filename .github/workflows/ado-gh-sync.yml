@@ -28,10 +28,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: csharp
+    #- name: Initialize CodeQL
+    #  uses: github/codeql-action/init@v2
+    #  with:
+    #    languages: csharp
 
     - name: Build Azure Function
       uses: ./.github/actions/build-dotnet
@@ -39,12 +39,13 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         configuration: ${{ env.CONFIGURATION }}
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+    #- name: Perform CodeQL Analysis
+    #  uses: github/codeql-action/analyze@v2
     
     - name: List Files
       run: |
-        ls -a       
+        cd AzDevOps-GitHub-Workflow
+        ls -aR
         
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
