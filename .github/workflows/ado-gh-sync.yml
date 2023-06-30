@@ -1,0 +1,67 @@
+name: CI/CD - ADO and GH Sync
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'AzDevOps-GitHub-Workflow/**'
+
+env:
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: AzDevOps-GitHub-Workflow\Functions
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: csharp
+
+    - name: Build Azure Function
+      uses: ./.github/actions/build-dotnet
+      with:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        configuration: ${{ env.CONFIGURATION }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+    
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: functionapp
+        path: ${{ env.WORKING_DIRECTORY }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build    
+    environment:
+      name: AzDevOps-GitHub-Workflow    
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: functionapp
+        path: ${{ env.WORKING_DIRECTORY }}
+    - name: Deploy to Azure Function App
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        package: ${{ env.WORKING_DIRECTORY }}
