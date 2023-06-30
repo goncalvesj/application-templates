@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - goncalvesj-patch-1
-    paths:
-      - 'AzDevOps-GitHub-Workflow/**'
+    #paths:
+    #  - 'AzDevOps-GitHub-Workflow/**'
 
 env:
   CONFIGURATION: Release
