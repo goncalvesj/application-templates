@@ -15,7 +15,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: AzDevOps-GitHub Environment
     steps:
     - uses: actions/checkout@v3
     
