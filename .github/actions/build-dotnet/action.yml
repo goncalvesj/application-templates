@@ -18,5 +18,5 @@ runs:
       run: dotnet build "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-restore
     - name: Publish
       shell: bash
-      run: dotnet publish "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-build --output "${{ inputs.working-directory }}"
+      run: dotnet publish "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-build --property:PublishDir="output"
   
