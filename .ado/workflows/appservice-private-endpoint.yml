@@ -4,7 +4,7 @@ trigger:
     - master
   paths:
     include:
-    - AppService-FrontDoor-PrivateEndpoints
+    - AppService-FrontDoor-PrivateEndpoints/**
 
 pool:
   vmImage: ubuntu-latest
