@@ -17,6 +17,10 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
   workingDirectory: AppService-FrontDoor-PrivateEndpoints
 
+- script: dotnet add package Microsoft.NET.Build.Containers
+  displayName: 'dotnet add container package'
+  workingDirectory: AppService-FrontDoor-PrivateEndpoints
+
 - script: dotnet publish --os linux --arch x64 -c $(buildConfiguration) -p:PublishProfile=DefaultContainer
   displayName: 'dotnet publish docker $(buildConfiguration)'
   workingDirectory: AppService-FrontDoor-PrivateEndpoints
