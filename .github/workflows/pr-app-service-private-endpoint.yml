@@ -1,0 +1,31 @@
+name: PR - App Service Private Endpoints
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "AppService-FrontDoor-PrivateEndpoints/**"
+
+env:
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 7.0.x
+  WORKING_DIRECTORY: AppService-FrontDoor-PrivateEndpoints
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and Scan .Net Function App
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          configuration: ${{ env.CONFIGURATION }}
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}

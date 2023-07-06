@@ -4,6 +4,12 @@ The purpose of this repository is to provide examples of application templates a
 
 ## Templates
 
+[.Net 7 App on Azure App Service with Private Endpoints Enabled](AppService-FrontDoor-Private-Endpoints)
+
+[Azure Fuction App that syncs Azure DevOps Work Items and GH Issues](AzDevOps-GitHub-Workflow)
+
+[.Net Apps on AKS that process Service Bus Queues using KEDA](AzureServiceBus-Worker-Notification)
+
 [.NET 6 Minimal APIs based on GraphQL and REST](DotNet-GraphQL-Rest-APIs)
 
 [Electron Application with Angular that uses Azure AD for AUTH](Electron-Angular-AzureAd)
@@ -22,6 +28,18 @@ The purpose of this repository is to provide examples of application templates a
 
 [.NET Core Application that can be used as a Windows Service](NetCore-WinService)
 
-TODO:
+## Project Planning
 
-- Update Angular and .NET Core versions
+Backlog is managed using Azure DevOps. The project is public and can be accessed using the link below.
+
+[Azure DevOps GitHub Integration](https://dev.azure.com/jpgoncalves/GitHub%20Integration)
+
+Work items are created in Azure DevOps and linked to GitHub issues. The work items are then linked to the issues with the GitHub Integration Service Connection.
+
+## Infrastructure as Code
+
+The infrastructure is managed using a combination of Terraform and Bicep. 
+
+The templates scripts are located in this repository:
+
+[Infrastructure Repository](https://github.com/goncalvesj/iac-templates)

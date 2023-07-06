@@ -6,6 +6,10 @@ Sample app to test connectivity to Azure Private Endpoints.
 
 [Link to infrastructure repo](https://github.com/goncalvesj/iac-templates/tree/master/Bicep/AppService-FrontDoor-PrivateEndpoints)
 
+## Azure Pipelines
+
+[![Build Status](https://dev.azure.com/jpgoncalves/GitHub%20Integration/_apis/build/status%2FApplication%20Templates%2FCICD%20-%20App%20Service%20FrontDoor%20PrivateEndpoints?branchName=master)](https://dev.azure.com/jpgoncalves/GitHub%20Integration/_build/latest?definitionId=25&branchName=master)
+
 ## Application
 
 .NET 7 Web API with Swagger UI.
