@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "AzDevOps-GitHub-Workflow/**"
+  workflow_dispatch:    
 
 env:
   CONFIGURATION: Release
