@@ -13,10 +13,10 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: cd AppService-FrontDoor-PrivateEndpoints
-
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+  workingDirectory: AppService-FrontDoor-PrivateEndpoints
 
 - script: dotnet publish --os linux --arch x64 -c $(buildConfiguration) -p:PublishProfile=DefaultContainer
   displayName: 'dotnet publish docker $(buildConfiguration)'
+  workingDirectory: AppService-FrontDoor-PrivateEndpoints
