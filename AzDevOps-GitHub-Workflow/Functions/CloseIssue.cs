@@ -11,7 +11,7 @@ public class CloseIssue
 {
     private readonly ILogger _logger;
     private readonly IAzDOClientService _azdoClient;
-
+    private static readonly Regex pattern = new(@"\[(AB#)(\d+)\]", RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
 
     public CloseIssue(ILoggerFactory loggerFactory, IAzDOClientService azdoClient)
     {
@@ -24,44 +24,34 @@ public class CloseIssue
     {
         _logger.LogInformation("HTTP trigger started");
 
-        try
+        var content = await req.ReadFromJsonAsync<GitHubRoot>();
+
+        if (content != null && content.Issue.State == "closed")
         {
-            var content = await req.ReadFromJsonAsync<GitHubRoot>();
+            var issue = content.Issue.Body;
 
-            if (content != null && content.Issue.State == "closed")
+            //var pattern = @"\[(AB#)(\d+)\]";
+            //var matches = Regex.Matches(issue, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+
+            var matches = pattern.Matches(issue);
+
+            for (int i = 0; i < matches.Count; i++)
             {
-                var issue = content.Issue.Body;
-
-                var pattern = @"\[(AB#)(\d+)\]";
-
-                var matches = Regex.Matches(issue, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
-
-                for (int i = 0; i < matches.Count; i++)
-                {
-                    Match match = matches[i];
-                    var workItem = await _azdoClient.UpdateWorkItemStatus(Convert.ToInt32(match.Groups[2].Value));
-                    _logger.LogInformation("Data: {workItem}", workItem.Url);
-                }
-
-                var successResponse = req.CreateResponse(HttpStatusCode.OK);
-                await successResponse.WriteAsJsonAsync(new { message = "Tasks closed successfully" });
-                return successResponse;
+                Match match = matches[i];
+                var workItem = await _azdoClient.UpdateWorkItemStatus(Convert.ToInt32(match.Groups[2].Value));
+                _logger.LogInformation("Data: {workItem}", workItem.Url);
             }
 
-            var message = "Issue not found or status is not closed";
-            _logger.LogInformation("Message: {message}", message);
-
-            var response = req.CreateResponse(HttpStatusCode.BadRequest);
-            await response.WriteAsJsonAsync(new { error = message });
-            return response;
-
+            var successResponse = req.CreateResponse(HttpStatusCode.OK);
+            await successResponse.WriteAsJsonAsync(new { message = "Tasks closed successfully" });
+            return successResponse;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating issue");
-            var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-            await errorResponse.WriteAsJsonAsync(new { error = "Error creating issue" });
-            return errorResponse;
-        }
+
+        var message = "Issue not found or status is not closed";
+        _logger.LogInformation("Message: {message}", message);
+
+        var response = req.CreateResponse(HttpStatusCode.BadRequest);
+        await response.WriteAsJsonAsync(new { error = message });
+        return response;
     }
 }

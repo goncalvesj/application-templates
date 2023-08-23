@@ -23,59 +23,50 @@ public class CreateIssue
     {
         _logger.LogInformation("HTTP trigger started");
 
-        try
+        var content = await req.ReadFromJsonAsync<AzDORoot>();
+
+        var systemTags = content?.Resource?.Fields?.SystemTags;
+        if (string.IsNullOrEmpty(systemTags))
         {
-            var content = await req.ReadFromJsonAsync<AzDORoot>();
+            var message = "SystemTags field not found";
+            _logger.LogInformation("Message: {message}", message);
 
-            var systemTags = content?.Resource?.Fields?.SystemTags;
-            if (string.IsNullOrEmpty(systemTags))
-            {
-                var message = "SystemTags field not found";
-                _logger.LogInformation("Message: {message}", message);
-
-                var response = req.CreateResponse(HttpStatusCode.BadRequest);
-                await response.WriteAsJsonAsync(new { error = message });
-                return response;
-            }
-
-            var tags = systemTags.Split(';');
-            var owner = tags.FirstOrDefault(t => t.Trim().StartsWith("owner:", StringComparison.OrdinalIgnoreCase))?.Split(':')[1]?.Trim();
-            var repo = tags.FirstOrDefault(t => t.Trim().StartsWith("repo:", StringComparison.OrdinalIgnoreCase))?.Split(':')[1]?.Trim();
-
-            if (string.IsNullOrEmpty(owner) || string.IsNullOrEmpty(repo))
-            {
-                var message = "Invalid owner or repo tag";
-                _logger.LogInformation("Message: {message}", message);
-
-                var response = req.CreateResponse(HttpStatusCode.BadRequest);
-                await response.WriteAsJsonAsync(new { error = message });
-                return response;
-            }
-
-            var newIssue = new NewIssue(content?.Resource.Fields.SystemTitle)
-            {
-                Body = $"Azure Boards WorkItem: AB#{content?.Resource.Id}"
-            };
-
-            var issue = await _githubClient.CreateGitHubIssue(owner, repo, newIssue);
-
-            var successResponse = req.CreateResponse(HttpStatusCode.OK);
-            await successResponse.WriteAsJsonAsync(new
-            {
-                issue.Id,
-                issue.Number,
-                issue.Title,
-                issue.HtmlUrl
-            });
-            _logger.LogInformation("GH Issue created successfully");
-            return successResponse;
+            var response = req.CreateResponse(HttpStatusCode.BadRequest);
+            await response.WriteAsJsonAsync(new { error = message });
+            return response;
         }
-        catch (Exception ex)
+
+        var tags = systemTags.Split(';');
+        var owner = tags.FirstOrDefault(t => t.Trim().StartsWith("owner:", StringComparison.OrdinalIgnoreCase))?.Split(':')[1]?.Trim();
+        var repo = tags.FirstOrDefault(t => t.Trim().StartsWith("repo:", StringComparison.OrdinalIgnoreCase))?.Split(':')[1]?.Trim();
+
+        if (string.IsNullOrEmpty(owner) || string.IsNullOrEmpty(repo))
         {
-            _logger.LogError(ex, "Error creating issue");
-            var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-            await errorResponse.WriteAsJsonAsync(new { error = "Error creating issue" });
-            return errorResponse;
+            var message = "Invalid owner or repo tag";
+            _logger.LogInformation("Message: {message}", message);
+
+            var response = req.CreateResponse(HttpStatusCode.BadRequest);
+            await response.WriteAsJsonAsync(new { error = message });
+            return response;
         }
+
+        var newIssue = new NewIssue(content?.Resource.Fields.SystemTitle)
+        {
+            Body = $"Azure Boards WorkItem: AB#{content?.Resource.Id}"
+        };
+
+        var issue = await _githubClient.CreateGitHubIssue(owner, repo, newIssue);
+
+        var successResponse = req.CreateResponse(HttpStatusCode.OK);
+        await successResponse.WriteAsJsonAsync(new
+        {
+            issue.Id,
+            issue.Number,
+            issue.Title,
+            issue.HtmlUrl
+        });
+
+        _logger.LogInformation("GH Issue created successfully");
+        return successResponse;
     }
 }
