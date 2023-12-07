@@ -3,7 +3,6 @@ using Microsoft.SemanticKernel;
 using System.ComponentModel;
 using System.Text.Json;
 
-
 public class HotelFilterPlugin
 {
     private List<Hotel> hotels;

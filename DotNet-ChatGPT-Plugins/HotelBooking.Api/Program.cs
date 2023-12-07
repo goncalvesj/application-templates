@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://chat.openai.com", "http://localhost:3000", "http://localhost:3001").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("https://chat.openai.com", "http://localhost:3000", "http://localhost:3001", "https://localhost:7239").AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -97,7 +97,7 @@ app.MapPost("/GetHotelsWithSK", async (PromptData promptData) =>
         .WithAzureOpenAIChatCompletionService(
                  Environment.GetEnvironmentVariable("aoai-deployment-name"),
                  Environment.GetEnvironmentVariable("aoai-aoai-endpoint"),
-                 Environment.GetEnvironmentVariable("aoai-key"));
+                 Environment.GetEnvironmentVariable("aoai-key"));        
 
         var kernel = builder.Build();
 
@@ -155,45 +155,3 @@ app.MapPost("/CancelBooking", (CancelBooking cancelBooking) =>
 });
 
 app.Run();
-
-public class Hotel
-{
-    public string Address { get; init; }
-    public string Name { get; init; }
-    public string Description { get; init; }
-    public string Country { get; init; }
-    public int Stars { get; init; }
-    public int Beds { get; init; }
-    public int Bathrooms { get; init; }
-    public bool HasWifi { get; init; }
-    public int Price { get; init; }
-    public string Currency { get; init; }
-}
-
-public class Booking
-{
-    /// <summary>
-    /// Hotel name
-    /// </summary>
-    public string Name { get; init; }
-    /// <summary>
-    /// Number of days to book for
-    /// </summary>
-    public int Days { get; init; }
-}
-
-public class CancelBooking
-{
-    /// <summary>
-    /// Reservation Id
-    /// </summary>
-    public string ReservationId { get; init; }
-}
-
-public class PromptData
-{
-    /// <summary>
-    /// Prompt text
-    /// </summary>
-    public string Text { get; init; }
-}

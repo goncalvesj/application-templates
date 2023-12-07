@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherForecast", "WeatherForecast\WeatherForecast.csproj", "{B03E00F3-908F-4944-97BC-6692C2BCC768}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelBooking", "HotelBooking\HotelBooking.csproj", "{743292ED-85A0-4786-9613-26BC304005D7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginShared", "PluginShared\PluginShared.csproj", "{96D9AA8D-C1FC-4F6C-BD76-D104D86DA968}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelBooking.Api", "HotelBooking.Api\HotelBooking.Api.csproj", "{161C55BD-DF92-413A-ADA4-6FE5A7018711}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherForecast.Api", "WeatherForecast.Api\WeatherForecast.Api.csproj", "{0EB5729F-E463-47A8-9CD4-CF65BC0B35AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking.Web", "HotelBooking.Web\HotelBooking.Web.csproj", "{C7FE29A7-384A-4BFE-BE33-1F99264E4EBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B03E00F3-908F-4944-97BC-6692C2BCC768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B03E00F3-908F-4944-97BC-6692C2BCC768}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B03E00F3-908F-4944-97BC-6692C2BCC768}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B03E00F3-908F-4944-97BC-6692C2BCC768}.Release|Any CPU.Build.0 = Release|Any CPU
-		{743292ED-85A0-4786-9613-26BC304005D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{743292ED-85A0-4786-9613-26BC304005D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{743292ED-85A0-4786-9613-26BC304005D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{743292ED-85A0-4786-9613-26BC304005D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{96D9AA8D-C1FC-4F6C-BD76-D104D86DA968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{96D9AA8D-C1FC-4F6C-BD76-D104D86DA968}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96D9AA8D-C1FC-4F6C-BD76-D104D86DA968}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96D9AA8D-C1FC-4F6C-BD76-D104D86DA968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{161C55BD-DF92-413A-ADA4-6FE5A7018711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{161C55BD-DF92-413A-ADA4-6FE5A7018711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{161C55BD-DF92-413A-ADA4-6FE5A7018711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{161C55BD-DF92-413A-ADA4-6FE5A7018711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB5729F-E463-47A8-9CD4-CF65BC0B35AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB5729F-E463-47A8-9CD4-CF65BC0B35AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB5729F-E463-47A8-9CD4-CF65BC0B35AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB5729F-E463-47A8-9CD4-CF65BC0B35AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7FE29A7-384A-4BFE-BE33-1F99264E4EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7FE29A7-384A-4BFE-BE33-1F99264E4EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7FE29A7-384A-4BFE-BE33-1F99264E4EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7FE29A7-384A-4BFE-BE33-1F99264E4EBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
