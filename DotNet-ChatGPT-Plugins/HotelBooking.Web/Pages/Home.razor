@@ -1,0 +1,178 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div class="container-fluid booking pb-5 wow fadeIn"
+     data-wow-delay="0.1s">
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">
+                Our Rooms
+            </h6>
+            <h1 class="mb-5">
+                Explore Our
+                <span class="text-primary text-uppercase">Rooms</span>
+            </h1>
+        </div>
+
+        <div class="bg-white shadow" style="padding: 35px">
+            <div class="row g-2">
+                <div class="col-md-10">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="date"
+                                 id="date1"
+                                 data-target-input="nearest">
+                                <input type="text"
+                                       class="form-control datetimepicker-input"
+                                       id="hotel_name"
+                                       placeholder="Hotel name" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="date"
+                                 id="date2"
+                                 data-target-input="nearest">
+                                <input type="text"
+                                       class="form-control datetimepicker-input"
+                                       id="hotel_address"
+                                       placeholder="Address" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="hotel_stars">
+                                <option selected>Stars</option>
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Star</option>
+                                <option value="3">3 Star</option>
+                                <option value="4">4 Star</option>
+                                <option value="5">5 Star</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="hotel_beds">
+                                <option selected>Beds</option>
+                                <option value="1">1 Bed</option>
+                                <option value="2">2 Beds</option>
+                                <option value="3">3 Beds</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white shadow" style="padding: 35px">
+            <div class="container">
+                <div class="row g-2">
+                    <div class="col-md-10">
+                        <input @bind="inputValue"
+                               type="text"
+                               class="form-control datetimepicker-input"
+                               id="semantic_search"
+                               placeholder="Do some magic search using semantic kernel.." />
+                    </div>
+                    <div class="col-md-2">
+                        <button @onclick="filterHotelsWithSemanticSearch"
+                                class="btn btn-primary w-100">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            @foreach (var item in hotels)
+            {
+                <div class="col-lg-4 col-md-6 wow fadeInUp"
+                     data-wow-delay="0.1s">
+                    <div class="room-item shadow rounded overflow-hidden">
+                        <div class="position-relative">
+                            <img class="img-fluid" alt="">
+                            <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">
+                                @item.Price/Night
+                            </small>
+                        </div>
+                        <div class="p-4 mt-2">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="mb-0">@item.Name</h5>
+                                <div class="ps-2">
+                                    @item.Stars <small class="fa fa-star text-primary"></small>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <small class="border-end me-3 pe-3">
+                                    <i class="fa fa-bed text-primary me-2"></i>
+                                    @item.Beds Bed
+                                </small>
+                                <small class="border-end me-3 pe-3">
+                                    <i class="fa fa-bath text-primary me-2"></i>
+                                    @item.Bathrooms Bath
+                                </small>
+                                @if (item.HasWifi)
+                                {
+                                    <small>
+                                        <i class="fa fa-wifi text-primary me-2"></i>
+                                        Wifi
+                                    </small>
+                                }
+                            </div>
+                            <p class="text-body mb-3">@item.Description</p>
+                            <div class="d-flex justify-content-between">
+                                <a class="btn btn-sm btn-primary rounded py-2 px-4"
+                                   href="">
+                                    View Detail
+                                </a>
+                                <a class="btn btn-sm btn-dark rounded py-2 px-4"
+                                   href="">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public IHttpClientFactory HttpClientFactory { get; set; }
+    private List<Hotel> hotels = new List<Hotel>();
+    private string? inputValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await this.filterHotels();
+    }
+
+    private async Task filterHotels()
+    {
+        var client = HttpClientFactory.CreateClient("HotelBookingApi");
+        var response = await client.GetAsync("/GetHotels");
+        response.EnsureSuccessStatusCode();
+
+        var hotels = await response.Content.ReadFromJsonAsync<List<Hotel>>();
+        this.hotels = hotels;
+    }
+
+    private async Task filterHotelsWithSemanticSearch()
+    {
+        var client = HttpClientFactory.CreateClient("HotelBookingApi");
+        var response = await client.PostAsJsonAsync<PromptData>("/GetHotelsWithSK", new PromptData { Text = "hotels with no wifi" });
+
+        response.EnsureSuccessStatusCode();
+
+        var hotels = await response.Content.ReadFromJsonAsync<List<Hotel>>();
+        this.hotels = hotels;
+    }
+}
