@@ -1,0 +1,36 @@
+name: "Build DotNet"
+description: "Builds a .NET project"
+inputs:
+   working-directory:
+     required: true
+     description: ""
+   configuration:
+     required: true
+     description: ""
+   dotnet-version:
+     required: true
+     description: ""
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: csharp
+
+    - name: Restore
+      shell: bash
+      run: dotnet restore "${{ inputs.working-directory }}"
+    - name: Build
+      shell: bash
+      run: dotnet build "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-restore
+    - name: Publish
+      shell: bash
+      run: dotnet publish "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-build --property:PublishDir="output"
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
