@@ -259,11 +259,14 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+.vscode
+*.pubxml
+
+# Project specific
 /NetCore-Angular-Elements/wwwroot/dist
 /NetCore-Angular-Elements/.vscode
 /NetCore-Angular-AzureB2C/.config
-.vscode
-*.pubxml
 /NetCore-WinService/docker-compose.override.yml
 /AzureServiceBus-Worker-Notification/docker-compose.override.yml
 /AzureServiceBus-Worker-Notification/Net.ServiceBus.Client/.env
+/Azure-K8S-On-Arc/node-api/build

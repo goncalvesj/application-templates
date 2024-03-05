@@ -1,0 +1,18 @@
+###
+GET http://localhost:5001/app1/hello
+
+###
+POST http://localhost:5001/app1/order
+
+###
+POST http://localhost:5001/app1/publishsdk
+
+###
+GET http://localhost:5002/app2/hello
+
+###
+POST http://localhost:5002/app2/order
+Content-Type: application/json
+{
+    "orderId": 1
+}
