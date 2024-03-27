@@ -1,0 +1,63 @@
+﻿@page "/authenticated"
+@attribute [Authorize]
+
+<PageTitle>Authenticated</PageTitle>
+
+<h3>Authenticated</h3>
+
+<p>This page makes a HTTP request to an API that is protected.</p>
+<p>It forces the user to Log In using the Authorize attribute.</p>
+<p>The API returns the default .NET boilerplate weather forecast result.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    public IHttpClientFactory HttpClientFactory { get; set; }
+
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = HttpClientFactory.CreateClient("ServerAPI");
+        forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("/weatherforecast");
+    }
+
+    public class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
