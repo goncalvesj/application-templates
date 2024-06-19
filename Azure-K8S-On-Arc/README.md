@@ -67,6 +67,10 @@ To connect to your database from outside the cluster execute the following comma
 
 ### REDIS Commands
 
+`redis-cli`
+
+`SET MyKey MyValue`
+
 `KEYS *`
 `GET key`
 `FLUSHDB`
