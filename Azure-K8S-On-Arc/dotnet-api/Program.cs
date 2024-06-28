@@ -58,14 +58,24 @@ app.MapGet("api/data/{key}", async (string key) =>
 
 app.MapPost("api/data", async (Model data) =>
 {
-    var json = JsonSerializer.Serialize(data);
+    try
+    {
+        var json = JsonSerializer.Serialize(data);
 
-    var client = new HttpClient();
-    var response = await client.PostAsync($"{configuration.GetValue<string>("PYAPI_URL")}/api/data",
-        new StringContent(json, null, "application/json"));
-    response.EnsureSuccessStatusCode();
+        // Some error
+        string nullString = null;
+        Console.WriteLine(nullString.Length);
 
-    return await response.Content.ReadAsStringAsync();
+        var client = new HttpClient();
+        var response = await client.PostAsync($"{configuration.GetValue<string>("PYAPI_URL")}/api/data",
+            new StringContent(json, null, "application/json"));
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+    catch (Exception ex)
+    {
+        throw;
+    }
 })
 .WithOpenApi();
 

@@ -3,7 +3,11 @@ kind: Deployment
 metadata:
   name: python-api
   namespace: web-apps
+  # Add the following annotation to enable Workload Identity
+  labels:
+    azure.workload.identity/use: "true"
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: python-api
@@ -11,10 +15,15 @@ spec:
     metadata:
       labels:
         app: python-api
-    spec:      
+    spec:
+      # Test this setting with Workload Identity
+      automountServiceAccountToken: false
+      # Specify the pod's service account for Workload Identity      
+      serviceAccountName: web-apps-wi-sa
       containers:
         - name: python-api
-          image: ghcr.io/goncalvesj/k8s-arc-python-api:latest
+          image: ghcr.io/goncalvesj/k8s-arc-python-api:dev
+          # imagePullPolicy: Always
           resources:
             limits:
               memory: '128Mi'
@@ -23,14 +32,19 @@ spec:
             - name: APP_ENVIRONMENT
               value: "PROD"
             - name: PORT_REDIS
-              value: "6379"
+              value: "6380"
             - name: HOST_REDIS
-              value: "my-redis-master"
-            - name: PASSWORD_REDIS
-              valueFrom:
-                secretKeyRef:
-                  name: my-redis
-                  key: redis-password
+              value: "redis-cbc-dev-neu.redis.cache.windows.net"            
+            - name: SECRETS_PATH
+              value: "/mnt/secrets-store"
+            - name: REDIS_SECRET_NAME
+              value: "redis-key"
+          # - name: PASSWORD_REDIS
+          #   value: ""
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: redis-key
+              #     key: redis-key
           ports:
             - containerPort: 80
           readinessProbe:
@@ -41,9 +55,20 @@ spec:
             periodSeconds: 60
           # livenessProbe:
           #   tcpSocket:
-          #     port: 8080 
+          #     port: 8080
           #   initialDelaySeconds: 15 
           #   periodSeconds: 20
+          volumeMounts:
+            - mountPath: "/mnt/secrets-store"
+              name: secrets-store01-inline
+              readOnly: true
+      volumes:
+        - name: secrets-store01-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: kv-cbc-42pwa-dev-neu-wi
 ---
 apiVersion: v1
 kind: Service

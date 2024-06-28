@@ -12,6 +12,7 @@ spec:
       labels:
         app: node-api
     spec:      
+      automountServiceAccountToken: false
       containers:
         - name: node-api
           image: ghcr.io/goncalvesj/k8s-arc-node-api:latest

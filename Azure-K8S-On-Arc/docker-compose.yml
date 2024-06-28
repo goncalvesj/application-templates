@@ -1,72 +1,77 @@
 version: '3.4'
 
 services:
-  dotnet-api:
-    image:  jprgacr.azurecr.io/dotnet-api:dev
-    networks:
-    - akstests-network
-    ports:
-    - "5001:5217"
-    environment:
-      - NODEAPI_URL=http://host.docker.internal:5002
-      - PYAPI_URL=http://host.docker.internal:5003
-    build:
-      context: .
-      dockerfile: dotnet-api/Dockerfile
+  # dotnet-api:
+  #   image:  jprgacr.azurecr.io/dotnet-api:dev
+  #   networks:
+  #   - akstests-network
+  #   ports:
+  #   - "5001:5217"
+  #   environment:
+  #     - NODEAPI_URL=http://host.docker.internal:5002
+  #     - PYAPI_URL=http://host.docker.internal:5003
+  #   build:
+  #     context: .
+  #     dockerfile: dotnet-api/Dockerfile
     
-  node-api:
-    image:  jprgacr.azurecr.io/node-api:dev
-    networks:
-    - akstests-network
-    ports:
-    - "5002:3000"
-    build:
-      context: .
-      dockerfile: node-api/Dockerfile
+  # node-api:
+  #   image:  jprgacr.azurecr.io/node-api:dev
+  #   networks:
+  #   - akstests-network
+  #   ports:
+  #   - "5002:3000"
+  #   build:
+  #     context: .
+  #     dockerfile: node-api/Dockerfile
 
   python-api:
-    image: jprgacr.azurecr.io/python-api:dev
+    image: ghcr.io/goncalvesj/k8s-arc-python-api:dev
     networks:
     - akstests-network
     ports:
       - 5003:8000
+    environment:
+      - APP_ENVIRONMENT=PROD
+      - PORT_REDIS=6380
+      - HOST_REDIS=mytestredis.redis.cache.windows.net
+      - PASSWORD_REDIS=
     build:
       context: .
       dockerfile: python-api/Dockerfile
   
-  sql-server:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    networks:
-    - akstests-network
-    ports:
-    - "1433:1433"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Passw0rd
-      - MSSQL_PID=Developer
-    # volumes:
-    #   - sql-data:/var/opt/mssql
-    healthcheck:
-      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "Passw0rd", "-Q", "SELECT 1" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+  # sql-server:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   networks:
+  #   - akstests-network
+  #   ports:
+  #   - "1433:1433"
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=Passw0rd
+  #     - MSSQL_PID=Developer
+  #   # volumes:
+  #   #   - sql-data:/var/opt/mssql
+  #   healthcheck:
+  #     test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "Passw0rd", "-Q", "SELECT 1" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 10s
   
-  redis:
-    image: redis:alpine
-    networks:
-    - akstests-network
-    ports:
-    - "6380:6379"
-    # volumes:
-    #   - redis-data:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+  # redis:
+  #   image: redis:6.2-alpine
+  #   networks:
+  #   - akstests-network
+  #   ports:
+  #   - "6379:6379"
+  #   # volumes:
+  #   #   - redis-data:/data
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "ping" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 10s
 
 networks:
   akstests-network:

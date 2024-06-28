@@ -12,6 +12,7 @@ spec:
       labels:
         app: dotnet-api
     spec:      
+      automountServiceAccountToken: false
       containers:
         - name: dotnet-api
           image: ghcr.io/goncalvesj/k8s-arc-dotnet-api:latest
