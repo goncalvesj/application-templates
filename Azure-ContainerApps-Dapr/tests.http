@@ -1,17 +1,20 @@
-###
-GET http://localhost:5001/app1/hello
+### Sender
+GET http://localhost:5001/api/hello
+
+### Service to Service
+POST http://localhost:5001/api/service-to-service
+
+### Pub Sub
+POST http://localhost:5001/api/pub-sub
+
+### Secret Store
+GET http://localhost:5001/api/secret-store
+
+### Consumer
+GET http://localhost:5002/api/hello
 
 ###
-POST http://localhost:5001/app1/order
-
-###
-POST http://localhost:5001/app1/publishsdk
-
-###
-GET http://localhost:5002/app2/hello
-
-###
-POST http://localhost:5002/app2/order
+POST http://localhost:5002/api/order
 Content-Type: application/json
 {
     "orderId": 1

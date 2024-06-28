@@ -20,12 +20,12 @@ app.UseCloudEvents();
 // needed for Dapr pub/sub routing
 app.MapSubscribeHandler();
 
-app.MapGet("app2/hello", () => {
+app.MapGet("api/hello", () => {
     return "Hello from App 2!";
 })
 .WithOpenApi();
 
-app.MapPost("app2/order", (Order order) => {
+app.MapPost("api/order", (Order order) => {
     Console.WriteLine("Order received : " + order);
     return order.ToString();
 })

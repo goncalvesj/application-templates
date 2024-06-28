@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  dapr-app-1:
-    image:  jprgacr.azurecr.io/daprtests/dapr-app-1:dev
+  dapr-sender-api:
+    image:  ghcr.io/goncalvesj/aca-dapr-sender-api:dev
     environment:
     - DAPR_GRPC_PORT=50002 #Needed for the Dapr SDK to communicate with the sidecar for Pub/Sub
     depends_on:
@@ -15,10 +15,10 @@ services:
       context: .
       dockerfile: Dapr.Api1/Dockerfile
   
-  dapr-app-1-dapr:
+  dapr-sender-api-dapr:
     image: "daprio/daprd:edge"
     command: ["./daprd",
-        "-app-id", "dapr-app-1",
+        "-app-id", "dapr-sender-api",
         "-app-port", "80",
         "-placement-host-address", "placement:50006",
         "-dapr-grpc-port", "50002",
@@ -27,11 +27,11 @@ services:
     volumes:
         - "./components/:/components"
     depends_on:
-        - dapr-app-1
-    network_mode: "service:dapr-app-1"
+        - dapr-sender-api
+    network_mode: "service:dapr-sender-api"
     
-  dapr-app-2:
-    image:  jprgacr.azurecr.io/daprtests/dapr-app-2:dev
+  dapr-consumer-api:
+    image:  ghcr.io/goncalvesj/aca-dapr-consumer-api:dev
     depends_on:
     - redis
     networks:
@@ -42,10 +42,10 @@ services:
       context: .
       dockerfile: Dapr.Api2/Dockerfile
    
-  dapr-app-2-dapr:
+  dapr-consumer-api-dapr:
     image: "daprio/daprd:edge"
     command: ["./daprd",
-        "-app-id", "dapr-app-2",
+        "-app-id", "dapr-consumer-api",
         "-app-port", "80",
         "-placement-host-address", "placement:50006",
         "-dapr-grpc-port", "50002",
@@ -54,8 +54,8 @@ services:
     volumes:
         - "./components/:/components"
     depends_on:
-        - dapr-app-2
-    network_mode: "service:dapr-app-2"
+        - dapr-consumer-api
+    network_mode: "service:dapr-consumer-api"
    
   #dapr-yarp:
   #  image:  jprgacr.azurecr.io/dapr-yarp:dev
