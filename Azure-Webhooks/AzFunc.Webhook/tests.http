@@ -1,0 +1,24 @@
+###
+POST http://localhost:7010/api/subscribe
+Content-Type: application/json
+
+{
+    "callbackurl": "https://callback"
+}
+
+###
+POST http://localhost:7010/api/unsubscribe
+Content-Type: application/json
+
+{
+    "callbackurl": "https://callback"
+}
+
+###
+GET http://localhost:7010/api/list
+
+###
+GET http://localhost:7010/api/clear
+
+###
+GET http://localhost:7010/api/trigger
