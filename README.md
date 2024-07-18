@@ -6,11 +6,17 @@ The purpose of this repository is to provide examples of application templates a
 
 [.Net 7 App on Azure App Service with Private Endpoints Enabled](AppService-FrontDoor-Private-Endpoints)
 
-[Azure Fuction App that syncs Azure DevOps Work Items and GH Issues](AzDevOps-GitHub-Workflow)
+[Azure Function App that syncs Azure DevOps Work Items and GH Issues](AzDevOps-GitHub-Workflow)
+
+[Azure Function App and Logic App Standard that interact through Webhooks](Azure-Webhooks/)
 
 [.Net Apps on AKS that process Service Bus Queues using KEDA](AzureServiceBus-Worker-Notification)
 
+[A .NET solution that mocks a platform for hotel booking and demonstrates how to implement plugins for ChatGPT.](DotNet-ChatGPT-Plugins/)
+
 [.NET 6 Minimal APIs based on GraphQL and REST](DotNet-GraphQL-Rest-APIs)
+
+[.NET console chat application using Azure Open AI and Semantic Kernel](Dotnet-SK-MemoryPlugin-ChatConsole/)
 
 [Electron Application with Angular that uses Azure AD for AUTH](Electron-Angular-AzureAd)
 
