@@ -1,0 +1,44 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "value": "@{triggerBody()}"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "HTTP_Webhook": {
+                "inputs": {
+                    "subscribe": {
+                        "body": {
+                            "callbackurl": "@{listCallbackUrl()}"
+                        },
+                        "method": "POST",
+                        "uri": "https://2608-4-210-69-107.ngrok-free.app/api/subscribe"
+                    },
+                    "unsubscribe": {
+                        "body": {
+                            "callbackurl": "@{listCallbackUrl()}"
+                        },
+                        "method": "POST",
+                        "uri": "https://2608-4-210-69-107.ngrok-free.app/api/unsubscribe"
+                    }
+                },
+                "type": "HttpWebhook"
+            }
+        }
+    },
+    "kind": "Stateful"
+}
