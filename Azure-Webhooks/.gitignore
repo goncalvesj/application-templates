@@ -265,3 +265,4 @@ __pycache__/
 
 # LA Standard
 *.debug
+*.zip

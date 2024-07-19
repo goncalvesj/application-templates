@@ -3,6 +3,7 @@
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
             "Initialize_variable": {
+                "type": "InitializeVariable",
                 "inputs": {
                     "variables": [
                         {
@@ -12,31 +13,30 @@
                         }
                     ]
                 },
-                "runAfter": {},
-                "type": "InitializeVariable"
+                "runAfter": {}
             }
         },
         "contentVersion": "1.0.0.0",
         "outputs": {},
         "triggers": {
             "HTTP_Webhook": {
+                "type": "HttpWebhook",
                 "inputs": {
                     "subscribe": {
+                        "method": "POST",
+                        "uri": "@{parameters('API_Endpoint')}/api/subscribe",
                         "body": {
                             "callbackurl": "@{listCallbackUrl()}"
-                        },
-                        "method": "POST",
-                        "uri": "https://2608-4-210-69-107.ngrok-free.app/api/subscribe"
+                        }
                     },
                     "unsubscribe": {
                         "body": {
                             "callbackurl": "@{listCallbackUrl()}"
                         },
                         "method": "POST",
-                        "uri": "https://2608-4-210-69-107.ngrok-free.app/api/unsubscribe"
+                        "uri": "@{parameters('API_Endpoint')}/api/unsubscribe"
                     }
-                },
-                "type": "HttpWebhook"
+                }
             }
         }
     },
