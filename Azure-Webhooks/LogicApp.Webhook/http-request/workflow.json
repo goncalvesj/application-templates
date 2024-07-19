@@ -18,7 +18,7 @@
             "HTTP": {
                 "type": "Http",
                 "inputs": {
-                    "uri": "http://localhost:7010/api/list",
+                    "uri": "@{parameters('API_Endpoint')}/api/list",
                     "method": "GET"
                 },
                 "runAfter": {},

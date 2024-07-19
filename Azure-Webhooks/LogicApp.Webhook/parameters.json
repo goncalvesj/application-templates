@@ -1,0 +1,6 @@
+{
+  "API_Endpoint": {
+    "type": "String",
+    "value": "https://localhost"
+  }
+}
