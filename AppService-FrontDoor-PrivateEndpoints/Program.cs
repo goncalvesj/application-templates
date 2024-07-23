@@ -43,7 +43,10 @@ app.MapGet("/testpostgres", async () =>
     try
     {
         var mySetting = configuration.GetValue<string>("POSTGRES_CONNECTIONSTRING");
-       
+
+        if (string.IsNullOrEmpty(mySetting))
+            throw new ArgumentException("Connection string not found.");
+
         await using var conn = new NpgsqlConnection(mySetting);
         await conn.OpenAsync();
 
@@ -66,6 +69,10 @@ app.MapGet("/testsql", async () =>
     try
     {
         var mySetting = configuration.GetValue<string>("SQL_CONNECTIONSTRING");
+
+        if (string.IsNullOrEmpty(mySetting))
+            throw new ArgumentException("Connection string not found.");
+
         using var con = new SqlConnection(mySetting);
         con.Open();
 
@@ -86,6 +93,10 @@ app.MapGet("/testcache", async () =>
     try
     {
         var mySetting = configuration.GetValue<string>("CACHE_CONNECTIONSTRING");
+        
+        if (string.IsNullOrEmpty(mySetting))
+            throw new ArgumentException("Connection string not found.");
+        
         var redis = ConnectionMultiplexer.Connect(mySetting);
 
         var cache = redis.GetDatabase();
@@ -109,6 +120,10 @@ app.MapGet("/teststorage", async () =>
     try
     {
         var mySetting = configuration.GetValue<string>("STORAGE_CONNECTIONSTRING");
+
+        if (string.IsNullOrEmpty(mySetting))
+            throw new ArgumentException("Connection string not found.");
+
         var containerName = "test-container";
 
         BlobContainerClient container = new(mySetting, containerName);
