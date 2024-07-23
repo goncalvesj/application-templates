@@ -29,3 +29,15 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           configuration: ${{ env.CONFIGURATION }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+  deploy-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build
+    name: package app
+    with:
+      image-tag: dotnet-pe-tester
+      build-context: AppService-FrontDoor-PrivateEndpoints #Doesnt accept global env variables as input
+      dockerfile-location: Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
