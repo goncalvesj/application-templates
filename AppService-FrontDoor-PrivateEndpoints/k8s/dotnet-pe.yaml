@@ -18,14 +18,15 @@ spec:
         prometheus.io/port: '8080'
     spec:
       automountServiceAccountToken: false
-      # securityContext:               
-      #   runAsUser: 5678
       containers:
       - name: dotnet-pe-tester
         image: ghcr.io/goncalvesj/dotnet-pe-tester:latest
         imagePullPolicy: Always
         securityContext:
           allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - NET_RAW
           runAsUser: 5678
         readinessProbe:
           httpGet:
