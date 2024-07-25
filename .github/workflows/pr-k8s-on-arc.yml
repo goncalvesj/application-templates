@@ -19,26 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
       
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript
-      
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/node-api
           npm install
           npm run build
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
 
   build-python:
     runs-on: ubuntu-latest
@@ -46,39 +38,24 @@ jobs:
       input: environment variable
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: python
+        uses: actions/checkout@v4
 
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/python-api
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
 
   build-dotnet:
     name: build dotnet api
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+      - name: Build Dapr Sender API
+        uses: ./.github/actions/build-dotnet
         with:
-          languages: csharp
-      
-      - name: Build
-        run: |
-          cd ${{ env.APP_CONTEXT }}/dotnet-api
-          dotnet restore
-          dotnet build
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+          working-directory: Azure-K8S-On-Arc/dotnet-api
+          configuration: Release
+          dotnet-version: 8.0.x
