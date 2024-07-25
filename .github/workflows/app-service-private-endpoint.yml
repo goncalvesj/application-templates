@@ -9,7 +9,7 @@ on:
 
 env:
   CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 7.0.x
+  DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: AppService-FrontDoor-PrivateEndpoints
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Build and Scan .Net Function App
         uses: ./.github/actions/build-dotnet
@@ -29,3 +29,15 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           configuration: ${{ env.CONFIGURATION }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+  deploy-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build
+    name: package app
+    with:
+      image-tag: dotnet-pe-tester
+      build-context: AppService-FrontDoor-PrivateEndpoints #Doesnt accept global env variables as input
+      dockerfile-location: Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write

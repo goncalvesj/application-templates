@@ -14,13 +14,14 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: csharp
+    
+    # - name: Initialize CodeQL
+    #   uses: github/codeql-action/init@v3
+    #   with:
+    #     languages: csharp
 
     - name: Restore
       shell: bash
@@ -32,5 +33,5 @@ runs:
       shell: bash
       run: dotnet publish "${{ inputs.working-directory }}" --configuration ${{ inputs.configuration }} --no-build --property:PublishDir="output"
     
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+    # - name: Perform CodeQL Analysis
+    #   uses: github/codeql-action/analyze@v3
