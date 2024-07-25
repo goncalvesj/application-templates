@@ -18,6 +18,7 @@ spec:
           image: ghcr.io/goncalvesj/k8s-arc-node-api:latest
           securityContext:
             allowPrivilegeEscalation: false
+            runAsUser: 5678
           resources:
             limits:
               memory: '128Mi'

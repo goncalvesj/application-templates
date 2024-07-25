@@ -19,8 +19,9 @@ COPY node-api/.env ./
 COPY --from=build /usr/src/app/build .
 RUN npm install --production --silent && mv node_modules ../
 
-RUN chown -R node /usr/src/app
-USER node
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /usr/src/app
+USER appuser
+
 EXPOSE 3000
 CMD ["node", "index.js"]
 
