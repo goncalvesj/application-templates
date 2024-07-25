@@ -1,0 +1,88 @@
+version: '3.4'
+
+services:
+  dapr-sender-api:
+    image:  ghcr.io/goncalvesj/aca-dapr-sender-api:dev
+    environment:
+    - DAPR_GRPC_PORT=50002 #Needed for the Dapr SDK to communicate with the sidecar for Pub/Sub
+    depends_on:
+    - redis
+    networks:
+    - dapr-network
+    ports:
+    - "5001:80"
+    build:
+      context: .
+      dockerfile: Dapr.Sender.Api/Dockerfile
+  
+  dapr-sender-api-dapr:
+    image: "daprio/daprd:edge"
+    command: ["./daprd",
+        "-app-id", "dapr-sender-api",
+        "-app-port", "80",
+        "-placement-host-address", "placement:50006",
+        "-dapr-grpc-port", "50002",
+        "-dapr-http-port", "3500",
+        "-components-path", "/components"]
+    volumes:
+        - "./components/:/components"
+    depends_on:
+        - dapr-sender-api
+    network_mode: "service:dapr-sender-api"
+    
+  dapr-consumer-api:
+    image:  ghcr.io/goncalvesj/aca-dapr-consumer-api:dev
+    depends_on:
+    - redis
+    networks:
+    - dapr-network
+    ports:
+    - "5002:80"
+    build:
+      context: .
+      dockerfile: Dapr.Consumer.Api/Dockerfile
+   
+  dapr-consumer-api-dapr:
+    image: "daprio/daprd:edge"
+    command: ["./daprd",
+        "-app-id", "dapr-consumer-api",
+        "-app-port", "80",
+        "-placement-host-address", "placement:50006",
+        "-dapr-grpc-port", "50002",
+        "-dapr-http-port", "3500",
+        "-components-path", "/components"]
+    volumes:
+        - "./components/:/components"
+    depends_on:
+        - dapr-consumer-api
+    network_mode: "service:dapr-consumer-api"
+   
+  #dapr-yarp:
+  #  image:  jprgacr.azurecr.io/dapr-yarp:dev
+  #  ports:
+  #  - "5000:80"
+  #  build:
+  #    context: .
+  #    dockerfile: Dapr.Yarp/Dockerfile
+  
+  ############################
+  # Dapr placement service
+  ############################
+  placement:
+    image: "daprio/dapr"
+    networks:
+    - dapr-network
+    command: ["./placement", "-port", "50006"]
+    ports:
+      - "50006:50006"
+  ############################
+  # Redis state store
+  ############################
+  redis:
+    image: "redis:alpine"
+    networks:
+    - dapr-network
+    ports:
+      - "6380:6379"
+networks:
+  dapr-network:

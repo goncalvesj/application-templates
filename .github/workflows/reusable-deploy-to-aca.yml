@@ -1,0 +1,38 @@
+name: Reusable - Deploy to Azure Container Apps
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+      resource-group:
+        required: true
+        type: string
+      aca-name:
+        required: true
+        type: string
+
+permissions: read-all
+jobs:
+  deploy-to-aca:
+    environment: 
+      name: Development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt            
+            az containerapp update \
+            --name ${{ inputs.aca-name }} \
+            --resource-group ${{ inputs.resource-group }} \
+            --image ${{ inputs.image-tag }}

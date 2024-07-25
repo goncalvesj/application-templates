@@ -1,0 +1,14 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: azurekeyvault
+spec:
+  type: secretstores.azure.keyvault
+  version: v1
+  metadata:
+  - name: vaultName # Required
+    value: aca-external-dapr
+  # See authentication section below for all options
+  # Using System Assigned Managed Identity does not require any additional configuration  
+  - name: azureClientId
+    value: "e587432b-ee41-4ed2-bf07-1ca5738326eb"

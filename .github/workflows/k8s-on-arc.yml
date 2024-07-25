@@ -1,0 +1,94 @@
+name: CI/CD - K8S On Azure Arc
+
+on:
+  push:
+    branches: ['master']
+  workflow_dispatch:
+
+env:
+  APP_CONTEXT: 'Azure-K8S-On-Arc'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+      
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/node-api
+          npm install
+          npm run build
+
+  build-python:
+    runs-on: ubuntu-latest
+    env:
+      input: environment variable
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/python-api
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+  build-dotnet:
+    name: build dotnet api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Build
+        run: |
+          cd ${{ env.APP_CONTEXT }}/dotnet-api
+          dotnet restore
+          dotnet build
+
+  deploy-node-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-node
+    name: package node api
+    with:
+      image-tag: k8s-arc-node-api
+      build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
+      dockerfile-location: node-api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+
+  deploy-python-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-python
+    name: package python api        
+    with:
+      image-tag: k8s-arc-python-api
+      build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
+      dockerfile-location: python-api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+
+  deploy-dotnet-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-dotnet
+    name: package dotnet api
+    with:
+      image-tag: k8s-arc-dotnet-api
+      build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input
+      dockerfile-location: dotnet-api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
