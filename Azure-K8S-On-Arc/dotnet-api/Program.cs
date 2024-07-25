@@ -61,11 +61,7 @@ app.MapPost("api/data", async (Model data) =>
     try
     {
         var json = JsonSerializer.Serialize(data);
-
-        // Some error
-        string nullString = null;
-        Console.WriteLine(nullString.Length);
-
+        
         var client = new HttpClient();
         var response = await client.PostAsync($"{configuration.GetValue<string>("PYAPI_URL")}/api/data",
             new StringContent(json, null, "application/json"));
