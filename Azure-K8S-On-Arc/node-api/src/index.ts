@@ -9,7 +9,7 @@ import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerOptions } from './swaggerOptions';
-import { apiRoutes } from './router';
+import { ApiRoutes } from './router';
 import { Config } from './models';
 
 dotenv.config();
@@ -32,7 +32,7 @@ const config: Config = {
 const app = express();
 const specs = swaggerJsdoc(swaggerOptions);
 
-const router = new apiRoutes(config);
+const router = new ApiRoutes(config);
 /**
  *  App Configuration
  */

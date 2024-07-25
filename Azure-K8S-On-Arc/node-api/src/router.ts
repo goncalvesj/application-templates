@@ -2,12 +2,11 @@ import express, { Request, Response } from 'express';
 import * as redis from 'redis';
 import { Config, Model } from './models';
 
-export class apiRoutes {
+export class ApiRoutes {
   private router = express.Router();
   private redisClient!: redis.RedisClientType;
 
   constructor(config: Config) {
-    console.log(config);
 
     this.initRedis(config);
     this.setApiRoutes();
@@ -15,7 +14,7 @@ export class apiRoutes {
   }
 
   private initRedis(config: Config) {
-    var redisUrl = `redis://${config.HOST_REDIS}:${config.PORT_REDIS}`;
+    let redisUrl = `redis://${config.HOST_REDIS}:${config.PORT_REDIS}`;
     if (config.APP_ENVIRONMENT === 'PROD')
       redisUrl = `redis://:${config.PASSWORD_REDIS}@${config.HOST_REDIS}:${config.PORT_REDIS}`;
 
