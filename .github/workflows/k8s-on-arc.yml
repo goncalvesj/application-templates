@@ -2,7 +2,7 @@ name: CI/CD - K8S On Azure Arc
 
 on:
   push:
-    branches: ['features/dapr-aca-k8s-arc-apps']
+    branches: ['master']
   workflow_dispatch:
 
 env:

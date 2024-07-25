@@ -48,7 +48,7 @@ async def startup_event():
             os.path.join(secret_volume_path, redis_secret_name)
         ) as redis_secret_name_file:
             password_redis = redis_secret_name_file.read()
-            logger.info(f"Secret {redis_secret_name}: {password_redis}")
+            # logger.info(f"Secret {redis_secret_name}: {password_redis}")
 
         redis = await aioredis.Redis(
             host=host_redis, port=port_redis, password=password_redis, ssl=True

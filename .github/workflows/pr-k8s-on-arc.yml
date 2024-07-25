@@ -53,7 +53,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Build Dapr Sender API
+      - name: Build
         uses: ./.github/actions/build-dotnet
         with:
           working-directory: Azure-K8S-On-Arc/dotnet-api
