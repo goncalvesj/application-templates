@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         app: node-api
-    spec:      
+    spec:
       automountServiceAccountToken: false
       containers:
         - name: node-api
@@ -19,20 +19,17 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
           resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
             limits:
               memory: '128Mi'
               cpu: '500m'
+              ephemeral-storage: '1Gi'
           env:
             - name: APP_ENVIRONMENT
-              value: "PROD"
+              value: 'PROD'
             - name: PORT_REDIS
-              value: "6379"
+              value: '6379'
             - name: HOST_REDIS
-              value: "my-redis-master"
+              value: 'my-redis-master'
             - name: PASSWORD_REDIS
               valueFrom:
                 secretKeyRef:
@@ -48,8 +45,8 @@ spec:
             periodSeconds: 60
           # livenessProbe:
           #   tcpSocket:
-          #     port: 8080 
-          #   initialDelaySeconds: 15 
+          #     port: 8080
+          #   initialDelaySeconds: 15
           #   periodSeconds: 20
 ---
 apiVersion: v1

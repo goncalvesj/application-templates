@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         app: dotnet-api
-    spec:      
+    spec:
       automountServiceAccountToken: false
       containers:
         - name: dotnet-api
@@ -19,18 +19,15 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
           resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
             limits:
               memory: '128Mi'
               cpu: '500m'
+              ephemeral-storage: '1Gi'
           env:
             - name: NODEAPI_URL
-              value: "http://node-api:8082"
+              value: 'http://node-api:8082'
             - name: PYAPI_URL
-              value: "http://python-api:8081"
+              value: 'http://python-api:8081'
           ports:
             - containerPort: 80
           readinessProbe:
@@ -41,8 +38,8 @@ spec:
             periodSeconds: 60
           # livenessProbe:
           #   tcpSocket:
-          #     port: 8080 
-          #   initialDelaySeconds: 15 
+          #     port: 8080
+          #   initialDelaySeconds: 15
           #   periodSeconds: 20
 ---
 apiVersion: v1

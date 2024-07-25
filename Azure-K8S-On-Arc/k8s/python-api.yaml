@@ -5,7 +5,7 @@ metadata:
   namespace: web-apps
   # Add the following annotation to enable Workload Identity
   labels:
-    azure.workload.identity/use: "true"
+    azure.workload.identity/use: 'true'
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       # Test this setting with Workload Identity
       automountServiceAccountToken: false
-      # Specify the pod's service account for Workload Identity      
+      # Specify the pod's service account for Workload Identity
       serviceAccountName: web-apps-wi-sa
       containers:
         - name: python-api
@@ -27,30 +27,27 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
           resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
             limits:
               memory: '128Mi'
               cpu: '500m'
+              ephemeral-storage: '1Gi'
           env:
             - name: APP_ENVIRONMENT
-              value: "PROD"
+              value: 'PROD'
             - name: PORT_REDIS
-              value: "6380"
+              value: '6380'
             - name: HOST_REDIS
-              value: "redis-cbc-dev-neu.redis.cache.windows.net"            
+              value: 'redis-cbc-dev-neu.redis.cache.windows.net'
             - name: SECRETS_PATH
-              value: "/mnt/secrets-store"
+              value: '/mnt/secrets-store'
             - name: REDIS_SECRET_NAME
-              value: "redis-key"
+              value: 'redis-key'
           # - name: PASSWORD_REDIS
           #   value: ""
-              # valueFrom:
-              #   secretKeyRef:
-              #     name: redis-key
-              #     key: redis-key
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: redis-key
+          #     key: redis-key
           ports:
             - containerPort: 80
           readinessProbe:
@@ -62,10 +59,10 @@ spec:
           # livenessProbe:
           #   tcpSocket:
           #     port: 8080
-          #   initialDelaySeconds: 15 
+          #   initialDelaySeconds: 15
           #   periodSeconds: 20
           volumeMounts:
-            - mountPath: "/mnt/secrets-store"
+            - mountPath: '/mnt/secrets-store'
               name: secrets-store01-inline
               readOnly: true
       volumes:
