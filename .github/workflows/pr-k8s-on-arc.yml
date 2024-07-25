@@ -1,7 +1,7 @@
 name: PR - K8S On Azure Arc
 
 on:
-  push:
+  pull_request:
     branches:
       - master
     paths:

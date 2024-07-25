@@ -5,6 +5,7 @@ trigger:
   paths:
     include:
     - AppService-FrontDoor-PrivateEndpoints/**
+pr: none
 
 pool:
   vmImage: ubuntu-latest
