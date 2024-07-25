@@ -6,7 +6,7 @@
 trigger:
   branches:
     include:
-    - features/dapr-aca-k8s-arc-apps    
+    - master
   paths:
     include:
     - Azure-ContainerApps-Dapr
