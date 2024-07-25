@@ -1,0 +1,44 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Initialize_variable": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "value": "@{triggerBody()}"
+                        }
+                    ]
+                },
+                "runAfter": {}
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "HTTP_Webhook": {
+                "type": "HttpWebhook",
+                "inputs": {
+                    "subscribe": {
+                        "method": "POST",
+                        "uri": "@{parameters('API_Endpoint')}/api/subscribe",
+                        "body": {
+                            "callbackurl": "@{listCallbackUrl()}"
+                        }
+                    },
+                    "unsubscribe": {
+                        "body": {
+                            "callbackurl": "@{listCallbackUrl()}"
+                        },
+                        "method": "POST",
+                        "uri": "@{parameters('API_Endpoint')}/api/unsubscribe"
+                    }
+                }
+            }
+        }
+    },
+    "kind": "Stateful"
+}
