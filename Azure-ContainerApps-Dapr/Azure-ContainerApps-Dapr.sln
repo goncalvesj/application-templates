@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapr.Api1", "Dapr.Api1\Dapr.Api1.csproj", "{FF4AA3C6-5EA5-441A-AD8D-FA352C58896A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapr.Sender.Api", "Dapr.Api1\Dapr.Sender.Api.csproj", "{FF4AA3C6-5EA5-441A-AD8D-FA352C58896A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapr.Api2", "Dapr.Api2\Dapr.Api2.csproj", "{9BB4C6B3-3DBE-4FAC-B4D9-8D0913842E2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapr.Consumer.Api", "Dapr.Api2\Dapr.Consumer.Api.csproj", "{9BB4C6B3-3DBE-4FAC-B4D9-8D0913842E2B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapr.Yarp", "Dapr.Yarp\Dapr.Yarp.csproj", "{AF5FDC61-8DF9-4D50-A716-4C1BB7C8062C}"
 EndProject
