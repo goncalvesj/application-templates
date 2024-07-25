@@ -13,7 +13,7 @@ services:
     - "5001:80"
     build:
       context: .
-      dockerfile: Dapr.Api1/Dockerfile
+      dockerfile: Dapr.Sender.Api/Dockerfile
   
   dapr-sender-api-dapr:
     image: "daprio/daprd:edge"
@@ -40,7 +40,7 @@ services:
     - "5002:80"
     build:
       context: .
-      dockerfile: Dapr.Api2/Dockerfile
+      dockerfile: Dapr.Consumer.Api/Dockerfile
    
   dapr-consumer-api-dapr:
     image: "daprio/daprd:edge"

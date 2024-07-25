@@ -1,1 +1,1 @@
-dotnet build .\Dapr.Api1\ && dotnet build .\Dapr.Api2\ && dotnet build .\Dapr.Yarp\
+dotnet build .\Dapr.Consumer.Api\ && dotnet build .\Dapr.Sender.Api\ && dotnet build .\Dapr.Yarp\
