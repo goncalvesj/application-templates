@@ -4,6 +4,8 @@ using Azure.Storage.Blobs;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Npgsql;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +19,26 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
+builder.Services.AddOpenTelemetry()
+    .WithTracing(builder => builder
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter()
+        .AddOtlpExporter())
+    .WithMetrics(builder => builder        
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddConsoleExporter()
+        .AddPrometheusExporter()
+        .AddOtlpExporter());
+
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.MapHealthChecks("/health");
-
-app.UseHttpsRedirection();
 
 const string connStringMessage = "Connection string not found.";
 
