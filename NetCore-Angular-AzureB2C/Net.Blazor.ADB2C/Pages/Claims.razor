@@ -1,0 +1,32 @@
+﻿@page "/claims"
+@using System.Security.Claims
+@attribute [Authorize]
+
+<PageTitle>Claims</PageTitle>
+
+<h3>Claims</h3>
+
+<p>This page displays the User Claims from an Authenticated User.</p>
+<p>It forces the user to Log In using the Authorize attribute.</p>
+
+<h4>Claims List</h4>
+<ul>
+    @foreach (var claim in _user.Claims)
+    {
+        <li><b>@claim.Type:</b> @claim.Value</li>
+    }
+</ul>
+
+@code {
+    [Inject]
+    public AuthenticationStateProvider GetAuthenticationStateAsync { get; set; }
+    public ClaimsPrincipal _user { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        _user = authstate.User;
+
+        await base.OnInitializedAsync();
+    }
+}
