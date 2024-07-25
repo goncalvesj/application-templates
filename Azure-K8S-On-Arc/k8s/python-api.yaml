@@ -24,7 +24,13 @@ spec:
         - name: python-api
           image: ghcr.io/goncalvesj/k8s-arc-python-api:dev
           # imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
           resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
             limits:
               memory: '128Mi'
               cpu: '500m'

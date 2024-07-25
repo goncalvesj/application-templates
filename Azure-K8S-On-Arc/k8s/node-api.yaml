@@ -16,7 +16,13 @@ spec:
       containers:
         - name: node-api
           image: ghcr.io/goncalvesj/k8s-arc-node-api:latest
+          securityContext:
+            allowPrivilegeEscalation: false
           resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
             limits:
               memory: '128Mi'
               cpu: '500m'

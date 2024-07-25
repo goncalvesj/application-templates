@@ -37,7 +37,7 @@ const router = new ApiRoutes(config);
  *  App Configuration
  */
 app.use(helmet());
-app.use(cors());
+// TO REVIEW: app.use(cors());
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/api', router.getRouter());
