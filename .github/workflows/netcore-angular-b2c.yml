@@ -1,18 +1,12 @@
 name: CI/CD - NetCore Angular B2C
 
-on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Reason'
-        required: true
-        default: 'Testing'
+on:  
   push:
     branches:
       - master
     paths:
       - 'NetCore-Angular-AzureB2C/**'
-      - '.github/workflows/netcore-angular-b2c.yml'
+  workflow_dispatch:
   # pull_request:
   #   branches: 
   #     - master
