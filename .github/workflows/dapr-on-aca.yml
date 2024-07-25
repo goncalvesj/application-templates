@@ -4,11 +4,6 @@ on:
   push:
     branches: ['features/dapr-aca-k8s-arc-apps']
   workflow_dispatch:
-    inputs:
-      tags:
-        description: 'Test scenario'
-        required: false
-        type: boolean
 
 env:
   APP_CONTEXT: 'Azure-ContainerApps-Dapr'
@@ -24,21 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: csharp
+        uses: actions/checkout@v4
 
       - name: Build
         run: |
-          cd ${{ env.APP_CONTEXT }}/Dapr.Api1
-          dotnet restore
-          dotnet build
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+          for proj in $(find . -name "*.csproj"); do
+            dotnet build "$proj"
+          done
 
   deploy-daprsender-api-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
@@ -47,17 +34,17 @@ jobs:
     with:
       image-tag: aca-dapr-sender-api
       build-context: Azure-ContainerApps-Dapr #Doesnt accept global env variables as input
-      dockerfile-location: Dapr.Api1/Dockerfile
+      dockerfile-location: Dapr.Sender.Api/Dockerfile
     secrets: inherit
     permissions:
       packages: write
 
-  deploy-daprsender-api-aca:
-    uses: ./.github/workflows/reusable-deploy-to-aca.yml
-    needs: deploy-daprsender-api-ghcr
-    name: deploy dapr sender api
-    with:
-      image-tag: aca-dapr-sender-api
-      aca-name: dapr-app-1
-      resource-group: JPRG-ALZ-LZ2
-    secrets: inherit
+  # deploy-daprsender-api-aca:
+  #   uses: ./.github/workflows/reusable-deploy-to-aca.yml
+  #   needs: deploy-daprsender-api-ghcr
+  #   name: deploy dapr sender api
+  #   with:
+  #     image-tag: aca-dapr-sender-api
+  #     aca-name: dapr-app-1
+  #     resource-group: JPRG-ALZ-LZ2
+  #   secrets: inherit

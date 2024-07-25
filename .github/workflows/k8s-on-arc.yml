@@ -4,11 +4,6 @@ on:
   push:
     branches: ['features/dapr-aca-k8s-arc-apps']
   workflow_dispatch:
-    inputs:
-      tags:
-        description: 'Test scenario'
-        required: false
-        type: boolean
 
 env:
   APP_CONTEXT: 'Azure-K8S-On-Arc'
@@ -22,11 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
+      
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/node-api
@@ -39,7 +36,8 @@ jobs:
       input: environment variable
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/python-api
@@ -51,7 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/dotnet-api
