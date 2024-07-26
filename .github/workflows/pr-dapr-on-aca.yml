@@ -23,16 +23,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Dapr Sender API
+      - name: Build Sender API
         uses: ./.github/actions/build-dotnet
         with:
           working-directory: Azure-ContainerApps-Dapr/Dapr.Sender.Api
           configuration: Release
           dotnet-version: 8.0.x
       
-      - name: Build Dapr Consumer API
+      - name: Build Sender Docker image
+        uses: ./.github/actions/build-docker
+        with:
+          image-tag: aca-dapr-sender-api
+          build-context: Azure-ContainerApps-Dapr
+          dockerfile-location: Dapr.Sender.Api/Dockerfile
+
+      - name: Build Consumer API
         uses: ./.github/actions/build-dotnet
         with:
           working-directory: Azure-ContainerApps-Dapr/Dapr.Consumer.Api
           configuration: Release
           dotnet-version: 8.0.x
+
+      - name: Build Consumer Docker image
+        uses: ./.github/actions/build-docker
+        with:
+          image-tag: aca-dapr-consumer-api
+          build-context: Azure-ContainerApps-Dapr
+          dockerfile-location: Dapr.Consumer.Api/Dockerfile

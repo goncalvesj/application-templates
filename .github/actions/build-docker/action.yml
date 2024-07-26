@@ -1,0 +1,22 @@
+name: "Build Docker"
+description: "Builds a Dockerfile"
+inputs:
+   image-tag:
+     required: true
+     description: ""
+   build-context:
+     required: true
+     description: ""
+   dockerfile-location:
+     required: true
+     description: ""
+runs:
+  using: "composite"
+  steps:    
+    - name: Build
+      shell: bash
+      run: |
+        cd ${{ inputs.build-context }}
+        docker build -f ${{ inputs.dockerfile-location }} \
+        -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:$GITHUB_RUN_ID \
+        -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:latest .
