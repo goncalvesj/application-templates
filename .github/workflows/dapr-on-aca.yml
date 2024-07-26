@@ -12,6 +12,7 @@ permissions:
   security-events: write
   id-token: write
   contents: read
+  packages: write
 
 jobs:
   build-dotnet:
