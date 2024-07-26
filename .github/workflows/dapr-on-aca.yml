@@ -2,7 +2,10 @@ name: CI/CD - Dapr On Azure Container Apps
 
 on:
   push:
-    branches: ['master']
+    branches:
+      - master
+    paths:
+      - 'Azure-ContainerApps-Dapr/**'
   workflow_dispatch:
 
 env:
@@ -12,7 +15,6 @@ permissions:
   security-events: write
   id-token: write
   contents: read
-  packages: write
 
 jobs:
   build-dotnet:
@@ -28,7 +30,7 @@ jobs:
           working-directory: Azure-ContainerApps-Dapr/Dapr.Sender.Api
           configuration: Release
           dotnet-version: 8.0.x
-      
+
       - name: Build Dapr Consumer API
         uses: ./.github/actions/build-dotnet
         with:
@@ -38,7 +40,7 @@ jobs:
 
   deploy-sender-to-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
-    needs: build-dotnet    
+    needs: build-dotnet
     name: package dapr sender api
     with:
       image-tag: aca-dapr-sender-api
@@ -50,7 +52,7 @@ jobs:
 
   deploy-consumer-to-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
-    needs: build-dotnet    
+    needs: build-dotnet
     name: package dapr consumer api
     with:
       image-tag: aca-dapr-consumer-api

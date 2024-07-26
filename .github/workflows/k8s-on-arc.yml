@@ -2,7 +2,10 @@ name: CI/CD - K8S On Azure Arc
 
 on:
   push:
-    branches: ['master']
+    branches:
+      - master
+    paths:
+      - 'Azure-K8S-On-Arc/**'
   workflow_dispatch:
 
 env:
@@ -18,12 +21,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
-      
+
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/node-api
@@ -50,7 +53,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Build
         run: |
           cd ${{ env.APP_CONTEXT }}/dotnet-api
@@ -72,7 +75,7 @@ jobs:
   deploy-python-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
     needs: build-python
-    name: package python api        
+    name: package python api
     with:
       image-tag: k8s-arc-python-api
       build-context: Azure-K8S-On-Arc #Doesnt accept global env variables as input

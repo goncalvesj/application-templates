@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - "AppService-FrontDoor-PrivateEndpoints/**"
+      - 'AppService-FrontDoor-PrivateEndpoints/**'
 
 env:
   CONFIGURATION: Release
