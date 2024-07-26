@@ -51,7 +51,7 @@ jobs:
   deploy-consumer-to-ghcr:
     uses: ./.github/workflows/reusable-push-to-ghcr.yml
     needs: build-dotnet    
-    name: package dapr sender api
+    name: package dapr consumer api
     with:
       image-tag: aca-dapr-consumer-api
       build-context: Azure-ContainerApps-Dapr #Doesnt accept global env variables as input
