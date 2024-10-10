@@ -12,11 +12,15 @@ inputs:
      description: ""
 runs:
   using: "composite"
-  steps:    
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build
       shell: bash
       run: |
         cd ${{ inputs.build-context }}
-        docker build -f ${{ inputs.dockerfile-location }} \
+        docker buildx build -f ${{ inputs.dockerfile-location }} \
+        --platform linux/amd64,linux/arm64 \
         -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:$GITHUB_RUN_ID \
         -t ghcr.io/${{ github.actor }}/${{ inputs.image-tag }}:latest .

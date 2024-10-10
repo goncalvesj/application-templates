@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-pe-tester
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnet-pe-tester
+  template:
+    metadata:
+      labels:
+        app: dotnet-pe-tester
+      annotations:          
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '8080'
+    spec:
+      nodeSelector:
+        pooltype: apps
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"        
+      automountServiceAccountToken: false
+      containers:
+      - name: dotnet-pe-tester
+        image: ghcr.io/goncalvesj/dotnet-pe-tester:latest
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - NET_RAW
+          runAsUser: 5678
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+          - name: APP_CONFIG_ENDPOINT
+            value: ""
+          - name: APP_CONFIG_ENDPOINT_KEY
+            value: ""
+          - name: POSTGRES_CONNECTIONSTRING
+            value: ""
+          - name: SQL_CONNECTIONSTRING
+            value: ""
+          - name: CACHE_CONNECTIONSTRING
+            value: ""
+          - name: STORAGE_CONNECTIONSTRING
+            value: ""
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnet-pe-tester
+  namespace: default
+spec:
+  selector:
+    app: dotnet-pe-tester
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
