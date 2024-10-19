@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Authenticated Page";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>This page makes a HTTP request to an API that is protected.</p>
+<p>It forces the user to Log In using the Authorize attribute.</p>
+<p>The API returns the default .NET boilerplate weather forecast result.</p>
+
+<h2>Access Token</h2>
+<p>@ViewBag.Token</p>
+
+<h2>API Result</h2>
+<p>@ViewBag.ApiResult</p>
