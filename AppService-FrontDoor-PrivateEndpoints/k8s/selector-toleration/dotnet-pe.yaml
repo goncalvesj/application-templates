@@ -28,7 +28,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: dotnet-pe-tester
-          image: ghcr.io/goncalvesj/dotnet-pe-tester:11279064531
+          image: ghcr.io/goncalvesj/dotnet-pe-tester:0.0.9
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -63,7 +63,7 @@ spec:
             limits:
               memory: '128Mi'
               cpu: '500m'
-              ephemeral-storage: '100M'
+              ephemeral-storage: '10M'
           ports:
             - containerPort: 8080
 ---
