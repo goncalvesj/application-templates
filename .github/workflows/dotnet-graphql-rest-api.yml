@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'DotNet-GraphQL-Rest-APIs/**'
+      - '!DotNet-GraphQL-Rest-APIs/k8s/**'
   workflow_dispatch:
   # pull_request:
   #   branches:
@@ -42,7 +43,7 @@ jobs:
 
           docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile \
           --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar \
-          -t ${{ env.REST_IMAGE_NAME }}:build  $APP_CONTEXT
+          -t ${{ env.REST_IMAGE_NAME }}:build $APP_CONTEXT
 
       - name: Package Helm Charts
         run: |

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sw-restapi
-  namespace: web-apps
 spec:
   selector:
     matchLabels:
@@ -12,26 +11,33 @@ spec:
       labels:
         app: sw-restapi
     spec:
+      nodeSelector:
+        pooltype: apps
+        kubernetes.io/os: linux
+      tolerations:
+        - key: 'kubernetes.azure.com/scalesetpriority'
+          operator: 'Equal'
+          value: 'spot'
+          effect: 'NoSchedule'
       containers:
-      - name: sw-restapi
-        image: ghcr.io/goncalvesj/sw-rest:latest
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 80
+        - name: sw-restapi
+          image: ghcr.io/goncalvesj/sw-rest:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: sw-restapi
-  namespace: web-apps
 spec:
   selector:
     app: sw-restapi
   type: ClusterIP
   ports:
-  - port: 8083
-    targetPort: 80
+    - port: 8083
+      targetPort: 80
