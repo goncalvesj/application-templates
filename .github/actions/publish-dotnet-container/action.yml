@@ -7,6 +7,11 @@ inputs:
    dotnet-version:
      required: true
      description: ""
+   token:
+     description: 'github auth token (PAT, github token, or GitHub app token)'
+     required: true
+     default: ""
+
 runs:
   using: "composite"
   steps:
@@ -16,13 +21,11 @@ runs:
         dotnet-version: ${{ inputs.dotnet-version }}
     
     - name: Login to GitHub Packages
-      uses: docker/login-action@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: docker/login-action@v3      
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: $GITHUB_TOKEN
+        password: ${{ inputs.token }}
 
     - name: Publish
       shell: bash
