@@ -31,15 +31,13 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.working-directory }}
-        ls -la
-
+        
         # Container Image Tags are set up in the .csproj file
         # Retrieve the tag from the .csproj file
 
         csproj_file=$(find . -name "*.csproj" | head -n 1)
         tag=$(grep '<ContainerImageTag>' "$csproj_file" | sed -E 's/.*<ContainerImageTag>(.*)<\/ContainerImageTag>.*/\1/')          
-        echo "Container Image Tag: $tag"
+        echo $tag
 
-        ContainerImageTags='${{ github.run_id }};$tag'
-        
-        dotnet publish -t:PublishContainer -p ContainerRegistry='ghcr.io/${{ github.actor }}'
+        ContainerImageTags="${{ github.run_id }};$tag"        
+        dotnet publish -t:PublishContainer -p ContainerRegistry="ghcr.io/${{ github.actor }}"
