@@ -1,6 +1,7 @@
 name: CI/CD - App Service Private Endpoints
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
