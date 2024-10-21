@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,6 +8,7 @@
     <UserSecretsId>03ce4282-2b94-4d8f-8ae8-cdfa1dfab8ee</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    <ContainerImageTags>1.0.0;latest</ContainerImageTags>
   </PropertyGroup>
 
   <ItemGroup>
