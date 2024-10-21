@@ -7,10 +7,12 @@ inputs:
    dotnet-version:
      required: true
      description: ""
-   token:
-     description: 'github auth token (PAT, github token, or GitHub app token)'
+   image-name:
      required: true
-     default: ""
+     description: ""
+   token:
+     description: "github auth token (PAT, github token, or GitHub app token)"
+     required: true
 
 runs:
   using: "composite"
@@ -42,5 +44,7 @@ runs:
         # Needs to be wrapped in single and double quotes to be passed as a parameter
         tag=$(echo "${{ github.run_id }};$tag" | sed 's/.*/"&"/')        
         echo $tag
-        
-        dotnet publish -t:PublishContainer -p ContainerImageTags=$tag -p ContainerRegistry="ghcr.io/${{ github.actor }}"
+
+        dotnet publish -t:PublishContainer -p ContainerImageTags=$tag \
+        -p ContainerRegistry="ghcr.io" \
+        -p ContainerRepository="${{ github.actor }}\${{ inputs.image-name }}"
