@@ -15,6 +15,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v4
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
@@ -32,12 +33,14 @@ runs:
       run: |
         cd ${{ inputs.working-directory }}
         
-        # Container Image Tags are set up in the .csproj file
-        # Retrieve the tag from the .csproj file
-
-        csproj_file=$(find . -name "*.csproj" | head -n 1)
-        tag=$(grep '<ContainerImageTag>' "$csproj_file" | sed -E 's/.*<ContainerImageTag>(.*)<\/ContainerImageTag>.*/\1/')          
-        echo "tag=$tag" >> $GITHUB_ENV
-
-        ContainerImageTags="${{ github.run_id }};$tag"        
-        dotnet publish -t:PublishContainer -p ContainerRegistry="ghcr.io/${{ github.actor }}"
+        # App Version is set in Container Image Tags in the .csproj file
+        
+        # Retrieve the tag from the .csproj file        
+        csproj_file=$(find . -name "*.csproj" | head -n 1)        
+        tag=$(grep '<ContainerImageTags>' "$csproj_file" | sed -E 's/.*<ContainerImageTags>(.*)<\/ContainerImageTags>.*/\1/')
+        
+        # Needs to be wrapped in single and double quotes to be passed as a parameter
+        tag=$(echo "${{ github.run_id }};$tag" | sed 's/.*/"&"/')        
+        echo $tag
+        
+        dotnet publish -t:PublishContainer -p ContainerImageTags=$tag -p ContainerRegistry="ghcr.io/${{ github.actor }}"
