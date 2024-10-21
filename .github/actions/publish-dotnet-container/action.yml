@@ -47,4 +47,4 @@ runs:
 
         dotnet publish -t:PublishContainer -p ContainerImageTags=$tag \
         -p ContainerRegistry="ghcr.io" \
-        -p ContainerRepository="${{ github.actor }}\${{ inputs.image-name }}"
+        -p ContainerRepository="${{ github.actor }}/${{ inputs.image-name }}"
