@@ -39,6 +39,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Publish .Net App
         uses: ./.github/actions/publish-dotnet-container
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
