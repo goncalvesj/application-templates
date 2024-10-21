@@ -17,10 +17,12 @@ runs:
     
     - name: Login to GitHub Packages
       uses: docker/login-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ GITHUB_TOKEN }}
 
     - name: Publish
       shell: bash
