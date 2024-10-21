@@ -63,7 +63,7 @@ spec:
             limits:
               memory: '128Mi'
               cpu: '500m'
-              ephemeral-storage: '10M'
+              ephemeral-storage: '1Gi'
           ports:
             - containerPort: 8080
 ---
