@@ -8,7 +8,6 @@ on:
     paths:
       - 'AppService-FrontDoor-PrivateEndpoints/**'
       - '!AppService-FrontDoor-PrivateEndpoints/k8s/**'
-    
 
 env:
   CONFIGURATION: Release
@@ -23,6 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Build .Net App
         uses: ./.github/actions/build-dotnet
         with:
@@ -33,15 +33,16 @@ jobs:
   deploy-to-ghcr:
     runs-on: ubuntu-latest
     needs: build
-    permissions: 
+    permissions:
       packages: write
     steps:
+      - uses: actions/checkout@v4
       - name: Publish .Net App
         uses: ./.github/actions/publish-dotnet-container
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-        
+
   # deploy-to-ghcr:
   #   uses: ./.github/workflows/reusable-push-to-ghcr.yml
   #   needs: build
