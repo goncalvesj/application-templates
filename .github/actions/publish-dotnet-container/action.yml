@@ -37,7 +37,7 @@ runs:
 
         csproj_file=$(find . -name "*.csproj" | head -n 1)
         tag=$(grep '<ContainerImageTag>' "$csproj_file" | sed -E 's/.*<ContainerImageTag>(.*)<\/ContainerImageTag>.*/\1/')          
-        echo $tag
+        echo "tag=$tag" >> $GITHUB_ENV
 
         ContainerImageTags="${{ github.run_id }};$tag"        
         dotnet publish -t:PublishContainer -p ContainerRegistry="ghcr.io/${{ github.actor }}"
