@@ -1,0 +1,38 @@
+name: "Publish DotNet Container to GHCR"
+description: "Generates and publishes a container using the .NET SDK"
+inputs:
+   working-directory:
+     required: true
+     description: ""
+   dotnet-version:
+     required: true
+     description: ""
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+    
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish
+      shell: bash
+      run: |
+        cd ${{ inputs.working-directory }}
+
+        # Container Image Tags are set up in the .csproj file
+        # Retrieve the tag from the .csproj file
+
+        csproj_file=$(find . -name "*.csproj" | head -n 1)
+        tag=$(grep '<ContainerImageTag>' "$csproj_file" | sed -E 's/.*<ContainerImageTag>(.*)<\/ContainerImageTag>.*/\1/')          
+
+        ContainerImageTags='${{ github.run_id }};$tag'
+        
+        dotnet publish -t:PublishContainer -p ContainerRegistry='ghcr.io/${{ github.actor }}'
