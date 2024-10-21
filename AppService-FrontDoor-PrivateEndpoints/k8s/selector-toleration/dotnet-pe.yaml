@@ -28,7 +28,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: dotnet-pe-tester
-          image: ghcr.io/goncalvesj/dotnet-pe-tester:0.0.9
+          image: ghcr.io/goncalvesj/dotnet-pe-tester:1.0.0
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
