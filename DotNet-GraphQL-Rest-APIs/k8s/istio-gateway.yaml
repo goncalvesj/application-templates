@@ -14,7 +14,7 @@ spec:
             value: /
       backendRefs:
         - name: sw-restapi
-          port: 8083
+          port: 8080
 # For Istio External Gateway ---
 # apiVersion: gateway.networking.k8s.io/v1
 # kind: HTTPRoute

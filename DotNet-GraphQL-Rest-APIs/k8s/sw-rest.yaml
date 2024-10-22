@@ -25,14 +25,14 @@ spec:
           effect: 'NoSchedule'
       containers:
         - name: sw-restapi
-          image: ghcr.io/goncalvesj/sw-rest:11457269474
+          image: ghcr.io/goncalvesj/sw-rest:0.0.1
           imagePullPolicy: Always
           resources:
             limits:
               memory: '128Mi'
               cpu: '500m'
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           readinessProbe:
             httpGet:
               path: /health
@@ -49,5 +49,5 @@ spec:
     app: sw-restapi
   type: ClusterIP
   ports:
-    - port: 8083
-      targetPort: 80
+    - port: 8080
+      targetPort: 8080
