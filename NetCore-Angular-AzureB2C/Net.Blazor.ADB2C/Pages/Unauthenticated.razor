@@ -15,7 +15,7 @@
 
         protected override async Task OnInitializedAsync()
         {
-            var client = HttpClientFactory.CreateClient("ServerAPI.Unauthenticated");
+            var client = HttpClientFactory.CreateClient("WeatherApi.Unauthenticated");
             var result = await client.GetFromJsonAsync<UnauthorizedTestDto>("/unauthorized");
             _message = result.Message;
         }

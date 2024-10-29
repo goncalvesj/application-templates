@@ -1,4 +1,6 @@
 ﻿@page "/authenticated"
+@using Microsoft.AspNetCore.Authorization
+@using System.Net.Http.Json
 @attribute [Authorize]
 
 <PageTitle>Authenticated</PageTitle>
@@ -46,7 +48,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var client = HttpClientFactory.CreateClient("ServerAPI");
+        var client = HttpClientFactory.CreateClient("WeatherApi");
         forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("/weatherforecast");
     }
 
