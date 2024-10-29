@@ -1,24 +1,13 @@
 name: CI/CD - DotNet GraphQL Rest APIs
 
 on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Reason'
-        required: true
-        default: 'Testing'
   push:
     branches:
       - master
     paths:
       - 'DotNet-GraphQL-Rest-APIs/**'
-      - '.github/workflows/dotnet-graphql-rest-api.yml'
-  # pull_request:
-  #   branches: 
-  #     - master
-  #   paths:
-  #     - 'DotNet-GraphQL-Rest-APIs/**'
-  #     - '.github/workflows/dotnet-graphql-rest-api.yml'
+      - '!DotNet-GraphQL-Rest-APIs/k8s/**'
+  workflow_dispatch:
 
 env:
   GRAPHQL_IMAGE_NAME: 'sw-graphql'
@@ -35,11 +24,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.2.1
-    
+        uses: docker/setup-buildx-action@v3
+
       - name: Build images
         run: |
           docker buildx build -f $APP_CONTEXT/GraphQL.API/Dockerfile \
@@ -48,7 +37,7 @@ jobs:
 
           docker buildx build -f $APP_CONTEXT/Rest.API/Dockerfile \
           --output type=docker,dest=${{ env.REST_IMAGE_NAME }}.tar \
-          -t ${{ env.REST_IMAGE_NAME }}:build  $APP_CONTEXT
+          -t ${{ env.REST_IMAGE_NAME }}:build $APP_CONTEXT
 
       - name: Package Helm Charts
         run: |
@@ -56,7 +45,7 @@ jobs:
           helm package $APP_CONTEXT/helm/sw-graphapi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         with:
           name: output-artifacts
           path: |
@@ -64,82 +53,27 @@ jobs:
             ./*.tgz
           if-no-files-found: error
 
-  deploy-dev:
+  deploy-rest-api-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
     needs: build
-    name: Deploy to Azure Container Registry
-    runs-on: ubuntu-latest
-    environment: 
-      name: Development
-    steps:
-      - name: Azure Login
-        uses: Azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Azure ACR Login
-        run: |
-          az acr login -n ${{ secrets.AZURE_ACR_NAME }}
-
-      - name: Download artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: output-artifacts
-          path: /tmp
-
-      - name: Load and Push Docker image
-        run: |
-          GRAPH_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$GRAPHQL_IMAGE_NAME
-          REST_TAG_FULLNAME=${{ secrets.AZURE_ACR_NAME }}/$REST_IMAGE_NAME
-
-          docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
-          docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-
-          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:latest
-          docker push $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker push $GRAPH_TAG_FULLNAME:latest
-
-          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:latest
-          docker push $REST_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker push $REST_TAG_FULLNAME:latest
-
-  deploy-gh:
-    needs: build
-    name: Deploy to GH Packages
-    runs-on: ubuntu-latest
+    name: package app
+    with:
+      image-tag: sw-rest
+      build-context: DotNet-GraphQL-Rest-APIs #Doesnt accept global env variables as input
+      dockerfile-location: Rest.API/Dockerfile
+    secrets: inherit
     permissions:
       packages: write
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: output-artifacts
-          path: /tmp
 
-      - name: Login to GitHub Packages
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Load and Push Docker image
-        run: |
-          GRAPH_TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.GRAPHQL_IMAGE_NAME }}
-          REST_TAG_FULLNAME=ghcr.io/${{ github.actor }}/${{ env.REST_IMAGE_NAME }}
-
-          docker load --input /tmp/${{ env.GRAPHQL_IMAGE_NAME }}.tar
-          docker load --input /tmp/${{ env.REST_IMAGE_NAME }}.tar
-
-          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker tag ${{ env.GRAPHQL_IMAGE_NAME }}:build $GRAPH_TAG_FULLNAME:latest
-          docker push $GRAPH_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker push $GRAPH_TAG_FULLNAME:latest
-
-          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker tag ${{ env.REST_IMAGE_NAME }}:build $REST_TAG_FULLNAME:latest
-          docker push $REST_TAG_FULLNAME:$GITHUB_RUN_ID
-          docker push $REST_TAG_FULLNAME:latest
+  deploy-graphql-api-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build
+    name: package app
+    with:
+      image-tag: sw-graphql
+      build-context: DotNet-GraphQL-Rest-APIs #Doesnt accept global env variables as input
+      dockerfile-location: GraphQL.API/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+    

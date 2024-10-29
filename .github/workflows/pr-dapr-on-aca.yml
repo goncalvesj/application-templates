@@ -1,0 +1,52 @@
+name: PR - Dapr On Azure Container Apps
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'Azure-ContainerApps-Dapr/**'
+
+env:
+  APP_CONTEXT: 'Azure-ContainerApps-Dapr'
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build-dotnet:
+    name: build dapr apis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Sender API
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: Azure-ContainerApps-Dapr/Dapr.Sender.Api
+          configuration: Release
+          dotnet-version: 8.0.x
+      
+      - name: Build Sender Docker image
+        uses: ./.github/actions/build-docker
+        with:
+          image-tag: aca-dapr-sender-api
+          build-context: Azure-ContainerApps-Dapr
+          dockerfile-location: Dapr.Sender.Api/Dockerfile
+
+      - name: Build Consumer API
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: Azure-ContainerApps-Dapr/Dapr.Consumer.Api
+          configuration: Release
+          dotnet-version: 8.0.x
+
+      - name: Build Consumer Docker image
+        uses: ./.github/actions/build-docker
+        with:
+          image-tag: aca-dapr-consumer-api
+          build-context: Azure-ContainerApps-Dapr
+          dockerfile-location: Dapr.Consumer.Api/Dockerfile

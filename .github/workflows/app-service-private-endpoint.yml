@@ -1,19 +1,21 @@
 name: CI/CD - App Service Private Endpoints
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
     paths:
-      - "AppService-FrontDoor-PrivateEndpoints/**"
+      - 'AppService-FrontDoor-PrivateEndpoints/**'
+      - '!AppService-FrontDoor-PrivateEndpoints/k8s/**'
 
 env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: AppService-FrontDoor-PrivateEndpoints
+  IMAGE_NAME: dotnet-pe-tester
 
 permissions:
-  security-events: write
   id-token: write
   contents: read
 
@@ -22,8 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build and Scan .Net Function App
+      - name: Build .Net App
         uses: ./.github/actions/build-dotnet
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -31,13 +32,28 @@ jobs:
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
 
   deploy-to-ghcr:
-    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    runs-on: ubuntu-latest
     needs: build
-    name: package app
-    with:
-      image-tag: dotnet-pe-tester
-      build-context: AppService-FrontDoor-PrivateEndpoints #Doesnt accept global env variables as input
-      dockerfile-location: Dockerfile
-    secrets: inherit
     permissions:
       packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish .Net App
+        uses: ./.github/actions/publish-dotnet-container        
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+          image-name: ${{ env.IMAGE_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # deploy-to-ghcr:
+  #   uses: ./.github/workflows/reusable-push-to-ghcr.yml
+  #   needs: build
+  #   name: package app
+  #   with:
+  #     image-tag: dotnet-pe-tester
+  #     build-context: AppService-FrontDoor-PrivateEndpoints #Doesnt accept global env variables as input
+  #     dockerfile-location: Dockerfile
+  #   secrets: inherit
+  #   permissions:
+  #     packages: write

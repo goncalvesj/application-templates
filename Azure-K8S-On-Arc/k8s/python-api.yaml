@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-api
+  namespace: web-apps
+  # Add the following annotation to enable Workload Identity
+  labels:
+    azure.workload.identity/use: 'true'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-api
+  template:
+    metadata:
+      labels:
+        app: python-api
+    spec:
+      # Test this setting with Workload Identity
+      automountServiceAccountToken: false
+      # Specify the pod's service account for Workload Identity
+      serviceAccountName: web-apps-wi-sa
+      containers:
+        - name: python-api
+          image: ghcr.io/goncalvesj/k8s-arc-python-api:dev
+          # imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 5678
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+              ephemeral-storage: '1Gi'
+          env:
+            - name: APP_ENVIRONMENT
+              value: 'PROD'
+            - name: PORT_REDIS
+              value: '6380'
+            - name: HOST_REDIS
+              value: 'redis-cbc-dev-neu.redis.cache.windows.net'
+            - name: SECRETS_PATH
+              value: '/mnt/secrets-store'
+            - name: REDIS_SECRET_NAME
+              value: 'redis-key'
+          # - name: PASSWORD_REDIS
+          #   value: ""
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: redis-key
+          #     key: redis-key
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 8080
+          #   initialDelaySeconds: 15
+          #   periodSeconds: 20
+          volumeMounts:
+            - mountPath: '/mnt/secrets-store'
+              name: secrets-store01-inline
+              readOnly: true
+      volumes:
+        - name: secrets-store01-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: kv-cbc-42pwa-dev-neu-wi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-api
+  namespace: web-apps
+spec:
+  selector:
+    app: python-api
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8000

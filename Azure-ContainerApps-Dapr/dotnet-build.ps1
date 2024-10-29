@@ -1,0 +1,1 @@
+dotnet build .\Dapr.Consumer.Api\ && dotnet build .\Dapr.Sender.Api\ && dotnet build .\Dapr.Yarp\

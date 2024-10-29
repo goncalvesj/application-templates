@@ -42,6 +42,8 @@ app.MapHealthChecks("/health");
 
 const string connStringMessage = "Connection string not found.";
 
+app.MapGet("/testhello", () => "What's up doc!").WithOpenApi();
+
 app.MapGet("/testappconfig", async () =>
 {
     var endpoint = builder.Configuration["APP_CONFIG_ENDPOINT"] ?? "";

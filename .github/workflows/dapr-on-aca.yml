@@ -1,0 +1,73 @@
+name: CI/CD - Dapr On Azure Container Apps
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Azure-ContainerApps-Dapr/**'
+  workflow_dispatch:
+
+env:
+  APP_CONTEXT: 'Azure-ContainerApps-Dapr'
+
+permissions:
+  security-events: write
+  id-token: write
+  contents: read
+
+jobs:
+  build-dotnet:
+    name: build dapr sender api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Dapr Sender API
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: Azure-ContainerApps-Dapr/Dapr.Sender.Api
+          configuration: Release
+          dotnet-version: 8.0.x
+
+      - name: Build Dapr Consumer API
+        uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: Azure-ContainerApps-Dapr/Dapr.Consumer.Api
+          configuration: Release
+          dotnet-version: 8.0.x
+
+  deploy-sender-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-dotnet
+    name: package dapr sender api
+    with:
+      image-tag: aca-dapr-sender-api
+      build-context: Azure-ContainerApps-Dapr #Doesnt accept global env variables as input
+      dockerfile-location: Dapr.Sender.Api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+
+  deploy-consumer-to-ghcr:
+    uses: ./.github/workflows/reusable-push-to-ghcr.yml
+    needs: build-dotnet
+    name: package dapr consumer api
+    with:
+      image-tag: aca-dapr-consumer-api
+      build-context: Azure-ContainerApps-Dapr #Doesnt accept global env variables as input
+      dockerfile-location: Dapr.Consumer.Api/Dockerfile
+    secrets: inherit
+    permissions:
+      packages: write
+
+  # deploy-daprsender-api-aca:
+  #   uses: ./.github/workflows/reusable-deploy-to-aca.yml
+  #   needs: deploy-daprsender-api-ghcr
+  #   name: deploy dapr sender api
+  #   with:
+  #     image-tag: aca-dapr-sender-api
+  #     aca-name: dapr-app-1
+  #     resource-group: JPRG-ALZ-LZ2
+  #   secrets: inherit
