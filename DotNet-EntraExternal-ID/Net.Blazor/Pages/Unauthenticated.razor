@@ -1,0 +1,28 @@
+﻿@page "/unauthenticated"
+<PageTitle>Unauthenticated</PageTitle>
+
+<h3>Unauthenticated</h3>
+
+<p>This page makes a HTTP request to an API that does not is not protected.</p>
+<p><b>HTTP Result Message:</b> @_message</p>
+
+@code {
+    @code {
+        [Inject]
+        public IHttpClientFactory HttpClientFactory { get; set; }
+
+        public string _message { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            var client = HttpClientFactory.CreateClient("WeatherApi.Unauthenticated");
+            var result = await client.GetFromJsonAsync<UnauthorizedTestDto>("/unauthorized");
+            _message = result.Message;
+        }
+
+        public class UnauthorizedTestDto
+        {
+            public string Message { get; set; }
+        }
+    }
+}
