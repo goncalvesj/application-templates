@@ -1,4 +1,4 @@
-namespace Net.MVC.ADB2C.Models;
+namespace Net.MVC.Models;
 
 public class ErrorViewModel
 {

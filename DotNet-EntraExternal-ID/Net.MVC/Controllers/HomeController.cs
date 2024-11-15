@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
-using Net.MVC.ADB2C.Models;
+using Net.MVC.Models;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 
-namespace Net.MVC.ADB2C.Controllers;
+namespace Net.MVC.Controllers;
 
 public class HomeController : Controller
 {
