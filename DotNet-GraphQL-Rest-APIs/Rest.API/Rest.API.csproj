@@ -7,7 +7,7 @@
     <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0</ContainerBaseImage>
-    <ContainerImageTags>0.0.2</ContainerImageTags>
+    <ContainerImageTags>0.0.3</ContainerImageTags>
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 

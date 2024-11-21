@@ -58,7 +58,10 @@ var app = builder.Build();
 
 app.MapOpenApi();
 
-app.MapScalarApiReference();
+app.MapScalarApiReference(options =>
+{
+    options.OpenApiRoutePattern = "../openapi/v1.json";
+});
 
 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.MapHealthChecks("/health");
