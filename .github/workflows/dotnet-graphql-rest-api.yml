@@ -20,6 +20,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      SOLUTION_FILE: DotNet-GraphQL-Rest-APIs/API.sln
 
     steps:
       - uses: actions/checkout@v4
@@ -28,15 +30,13 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-
-      - name: Go to Folder
-        run: cd DotNet-GraphQL-Rest-APIs
+      
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore ${{ env.SOLUTION_FILE }}
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build --verbosity normal ${{ env.SOLUTION_FILE }}
 
   deploy-rest-api-to-ghcr:
     runs-on: ubuntu-latest
