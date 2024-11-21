@@ -1,4 +1,4 @@
-# .NET 6 GraphQL & REST API templates
+# .NET 9 GraphQL & REST API templates
 
 Apps that retrieves Star Wars films data from a JSON file using .NET 6 minimal APIs.
 

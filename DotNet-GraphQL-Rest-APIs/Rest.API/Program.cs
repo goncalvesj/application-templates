@@ -1,11 +1,33 @@
+using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Info = new()
+        {
+            Title = builder.Configuration["OpenAPI:Title"],
+            Version = builder.Configuration["OpenAPI:Version"],
+            Description = builder.Configuration["OpenAPI:Description"]
+        };
+        var deploymentUrl = builder.Configuration["OpenAPI:Server"];
+        if (!string.IsNullOrEmpty(deploymentUrl))
+        {
+            document.Servers.Add(new OpenApiServer { Url = deploymentUrl });
+        }
+
+        return Task.CompletedTask;
+    });
+});
+
 builder.Services.AddHealthChecks();
 
 const string SERVICE_NAME = "sw-api";
@@ -34,8 +56,9 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.MapOpenApi();
+
+app.MapScalarApiReference();
 
 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.MapHealthChecks("/health");
