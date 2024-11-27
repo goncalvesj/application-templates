@@ -7,9 +7,14 @@
     <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0</ContainerBaseImage>
-    <ContainerImageTags>0.0.1</ContainerImageTags>
+    <ContainerImageTag>0.0.1</ContainerImageTag>
     <DockerfileContext>.</DockerfileContext>
+    <UserSecretsId>0fd07cad-88da-4217-a87e-a4a4afef1367</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ContainerPort Include="8081" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.4" />
