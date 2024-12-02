@@ -7,13 +7,10 @@ on:
       - master
     paths:
       - 'AppService-FrontDoor-PrivateEndpoints/**'
-      - '!AppService-FrontDoor-PrivateEndpoints/k8s/**'
+      - '!AppService-FrontDoor-PrivateEndpoints/README.md'
 
 env:
-  CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 8.0.x
-  WORKING_DIRECTORY: AppService-FrontDoor-PrivateEndpoints
-  IMAGE_NAME: dotnet-pe-tester
+  DOTNET_CORE_VERSION: 9.0.x
 
 permissions:
   id-token: write
@@ -21,39 +18,43 @@ permissions:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
+    env:
+      SOLUTION_FILE: AppService-FrontDoor-PrivateEndpoints/AppService-FrontDoor-PrivateEndpoints.sln
+
     steps:
       - uses: actions/checkout@v4
-      - name: Build .Net App
-        uses: ./.github/actions/build-dotnet
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          working-directory: ${{ env.WORKING_DIRECTORY }}
-          configuration: ${{ env.CONFIGURATION }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+      
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
+      - name: Build
+        run: dotnet build --no-restore ${{ env.SOLUTION_FILE }}
+      - name: Test
+        run: dotnet test --no-build --verbosity normal ${{ env.SOLUTION_FILE }}
 
   deploy-to-ghcr:
     runs-on: ubuntu-latest
     needs: build
     permissions:
       packages: write
+      contents: read
+    outputs:
+      new-tag: ${{ steps.publish.outputs.new-tag }}
+    env:
+      WORKING_DIRECTORY: AppService-FrontDoor-PrivateEndpoints
+      IMAGE_NAME: dotnet-pe-tester
     steps:
-      - uses: actions/checkout@v4
       - name: Publish .Net App
-        uses: ./.github/actions/publish-dotnet-container        
+        id: publish
+        uses: goncalvesj/iac-templates/.github/actions/publish-dotnet-container@master
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
           image-name: ${{ env.IMAGE_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
-  # deploy-to-ghcr:
-  #   uses: ./.github/workflows/reusable-push-to-ghcr.yml
-  #   needs: build
-  #   name: package app
-  #   with:
-  #     image-tag: dotnet-pe-tester
-  #     build-context: AppService-FrontDoor-PrivateEndpoints #Doesnt accept global env variables as input
-  #     dockerfile-location: Dockerfile
-  #   secrets: inherit
-  #   permissions:
-  #     packages: write
